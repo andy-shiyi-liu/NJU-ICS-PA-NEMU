@@ -1,0 +1,80 @@
+
+testcase/bin/fact:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00030000 <start>:
+   30000:	e9 39 00 00 00       	jmp    3003e <main>
+
+00030005 <fact>:
+   30005:	55                   	push   %ebp
+   30006:	89 e5                	mov    %esp,%ebp
+   30008:	83 ec 08             	sub    $0x8,%esp
+   3000b:	e8 ac 00 00 00       	call   300bc <__x86.get_pc_thunk.ax>
+   30010:	05 f0 2f 00 00       	add    $0x2ff0,%eax
+   30015:	83 7d 08 00          	cmpl   $0x0,0x8(%ebp)
+   30019:	74 06                	je     30021 <fact+0x1c>
+   3001b:	83 7d 08 01          	cmpl   $0x1,0x8(%ebp)
+   3001f:	75 07                	jne    30028 <fact+0x23>
+   30021:	b8 01 00 00 00       	mov    $0x1,%eax
+   30026:	eb 14                	jmp    3003c <fact+0x37>
+   30028:	8b 45 08             	mov    0x8(%ebp),%eax
+   3002b:	48                   	dec    %eax
+   3002c:	83 ec 0c             	sub    $0xc,%esp
+   3002f:	50                   	push   %eax
+   30030:	e8 d0 ff ff ff       	call   30005 <fact>
+   30035:	83 c4 10             	add    $0x10,%esp
+   30038:	0f af 45 08          	imul   0x8(%ebp),%eax
+   3003c:	c9                   	leave  
+   3003d:	c3                   	ret    
+
+0003003e <main>:
+   3003e:	8d 4c 24 04          	lea    0x4(%esp),%ecx
+   30042:	83 e4 f0             	and    $0xfffffff0,%esp
+   30045:	ff 71 fc             	pushl  -0x4(%ecx)
+   30048:	55                   	push   %ebp
+   30049:	89 e5                	mov    %esp,%ebp
+   3004b:	53                   	push   %ebx
+   3004c:	51                   	push   %ecx
+   3004d:	83 ec 10             	sub    $0x10,%esp
+   30050:	e8 6b 00 00 00       	call   300c0 <__x86.get_pc_thunk.bx>
+   30055:	81 c3 ab 2f 00 00    	add    $0x2fab,%ebx
+   3005b:	c7 45 f4 00 00 00 00 	movl   $0x0,-0xc(%ebp)
+   30062:	eb 3d                	jmp    300a1 <main+0x63>
+   30064:	83 ec 0c             	sub    $0xc,%esp
+   30067:	ff 75 f4             	pushl  -0xc(%ebp)
+   3006a:	e8 96 ff ff ff       	call   30005 <fact>
+   3006f:	83 c4 10             	add    $0x10,%esp
+   30072:	c7 c2 60 30 03 00    	mov    $0x33060,%edx
+   30078:	8b 4d f4             	mov    -0xc(%ebp),%ecx
+   3007b:	89 04 8a             	mov    %eax,(%edx,%ecx,4)
+   3007e:	c7 c0 60 30 03 00    	mov    $0x33060,%eax
+   30084:	8b 55 f4             	mov    -0xc(%ebp),%edx
+   30087:	8b 14 90             	mov    (%eax,%edx,4),%edx
+   3008a:	8b 45 f4             	mov    -0xc(%ebp),%eax
+   3008d:	8b 84 83 20 00 00 00 	mov    0x20(%ebx,%eax,4),%eax
+   30094:	39 c2                	cmp    %eax,%edx
+   30096:	74 06                	je     3009e <main+0x60>
+   30098:	b8 01 00 00 00       	mov    $0x1,%eax
+   3009d:	82                   	nemu_trap 
+   3009e:	ff 45 f4             	incl   -0xc(%ebp)
+   300a1:	83 7d f4 0c          	cmpl   $0xc,-0xc(%ebp)
+   300a5:	7e bd                	jle    30064 <main+0x26>
+   300a7:	b8 00 00 00 00       	mov    $0x0,%eax
+   300ac:	82                   	nemu_trap 
+   300ad:	b8 00 00 00 00       	mov    $0x0,%eax
+   300b2:	8d 65 f8             	lea    -0x8(%ebp),%esp
+   300b5:	59                   	pop    %ecx
+   300b6:	5b                   	pop    %ebx
+   300b7:	5d                   	pop    %ebp
+   300b8:	8d 61 fc             	lea    -0x4(%ecx),%esp
+   300bb:	c3                   	ret    
+
+000300bc <__x86.get_pc_thunk.ax>:
+   300bc:	8b 04 24             	mov    (%esp),%eax
+   300bf:	c3                   	ret    
+
+000300c0 <__x86.get_pc_thunk.bx>:
+   300c0:	8b 1c 24             	mov    (%esp),%ebx
+   300c3:	c3                   	ret    

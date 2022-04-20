@@ -1,0 +1,125 @@
+
+testcase/bin/movsx:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00030000 <start>:
+   30000:	e9 00 00 00 00       	jmp    30005 <main>
+
+00030005 <main>:
+   30005:	55                   	push   %ebp
+   30006:	89 e5                	mov    %esp,%ebp
+   30008:	e8 95 01 00 00       	call   301a2 <__x86.get_pc_thunk.dx>
+   3000d:	81 c2 f3 2f 00 00    	add    $0x2ff3,%edx
+   30013:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   30019:	c7 00 00 00 00 00    	movl   $0x0,(%eax)
+   3001f:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   30025:	c7 40 04 01 00 00 00 	movl   $0x1,0x4(%eax)
+   3002c:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   30032:	c7 40 08 02 00 00 00 	movl   $0x2,0x8(%eax)
+   30039:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   3003f:	c7 40 0c 03 00 00 00 	movl   $0x3,0xc(%eax)
+   30046:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   3004c:	c7 40 10 04 00 00 00 	movl   $0x4,0x10(%eax)
+   30053:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   30059:	8b 48 0c             	mov    0xc(%eax),%ecx
+   3005c:	c7 c0 20 30 03 00    	mov    $0x33020,%eax
+   30062:	89 08                	mov    %ecx,(%eax)
+   30064:	c7 c0 20 30 03 00    	mov    $0x33020,%eax
+   3006a:	8b 08                	mov    (%eax),%ecx
+   3006c:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   30072:	89 48 14             	mov    %ecx,0x14(%eax)
+   30075:	c7 c0 68 30 03 00    	mov    $0x33068,%eax
+   3007b:	c6 00 61             	movb   $0x61,(%eax)
+   3007e:	c7 c0 68 30 03 00    	mov    $0x33068,%eax
+   30084:	8a 00                	mov    (%eax),%al
+   30086:	3c 61                	cmp    $0x61,%al
+   30088:	74 06                	je     30090 <main+0x8b>
+   3008a:	b8 01 00 00 00       	mov    $0x1,%eax
+   3008f:	82                   	nemu_trap 
+   30090:	c7 c0 68 30 03 00    	mov    $0x33068,%eax
+   30096:	8a 08                	mov    (%eax),%cl
+   30098:	c7 c0 68 30 03 00    	mov    $0x33068,%eax
+   3009e:	88 48 01             	mov    %cl,0x1(%eax)
+   300a1:	c7 c0 68 30 03 00    	mov    $0x33068,%eax
+   300a7:	8a 40 01             	mov    0x1(%eax),%al
+   300aa:	3c 61                	cmp    $0x61,%al
+   300ac:	74 06                	je     300b4 <main+0xaf>
+   300ae:	b8 01 00 00 00       	mov    $0x1,%eax
+   300b3:	82                   	nemu_trap 
+   300b4:	c7 c0 68 30 03 00    	mov    $0x33068,%eax
+   300ba:	8a 00                	mov    (%eax),%al
+   300bc:	0f be c8             	movsbl %al,%ecx
+   300bf:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   300c5:	89 08                	mov    %ecx,(%eax)
+   300c7:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   300cd:	8b 00                	mov    (%eax),%eax
+   300cf:	83 f8 61             	cmp    $0x61,%eax
+   300d2:	74 06                	je     300da <main+0xd5>
+   300d4:	b8 01 00 00 00       	mov    $0x1,%eax
+   300d9:	82                   	nemu_trap 
+   300da:	c7 c0 68 30 03 00    	mov    $0x33068,%eax
+   300e0:	c6 40 01 80          	movb   $0x80,0x1(%eax)
+   300e4:	c7 c0 68 30 03 00    	mov    $0x33068,%eax
+   300ea:	8a 40 01             	mov    0x1(%eax),%al
+   300ed:	0f be c8             	movsbl %al,%ecx
+   300f0:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   300f6:	89 08                	mov    %ecx,(%eax)
+   300f8:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   300fe:	8b 40 04             	mov    0x4(%eax),%eax
+   30101:	83 f8 01             	cmp    $0x1,%eax
+   30104:	74 06                	je     3010c <main+0x107>
+   30106:	b8 01 00 00 00       	mov    $0x1,%eax
+   3010b:	82                   	nemu_trap 
+   3010c:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   30112:	8b 40 08             	mov    0x8(%eax),%eax
+   30115:	83 f8 02             	cmp    $0x2,%eax
+   30118:	74 06                	je     30120 <main+0x11b>
+   3011a:	b8 01 00 00 00       	mov    $0x1,%eax
+   3011f:	82                   	nemu_trap 
+   30120:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   30126:	8b 40 0c             	mov    0xc(%eax),%eax
+   30129:	83 f8 03             	cmp    $0x3,%eax
+   3012c:	74 06                	je     30134 <main+0x12f>
+   3012e:	b8 01 00 00 00       	mov    $0x1,%eax
+   30133:	82                   	nemu_trap 
+   30134:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   3013a:	8b 40 10             	mov    0x10(%eax),%eax
+   3013d:	83 f8 04             	cmp    $0x4,%eax
+   30140:	74 06                	je     30148 <main+0x143>
+   30142:	b8 01 00 00 00       	mov    $0x1,%eax
+   30147:	82                   	nemu_trap 
+   30148:	c7 c0 20 30 03 00    	mov    $0x33020,%eax
+   3014e:	8b 00                	mov    (%eax),%eax
+   30150:	83 f8 03             	cmp    $0x3,%eax
+   30153:	74 06                	je     3015b <main+0x156>
+   30155:	b8 01 00 00 00       	mov    $0x1,%eax
+   3015a:	82                   	nemu_trap 
+   3015b:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   30161:	8b 40 14             	mov    0x14(%eax),%eax
+   30164:	83 f8 03             	cmp    $0x3,%eax
+   30167:	74 06                	je     3016f <main+0x16a>
+   30169:	b8 01 00 00 00       	mov    $0x1,%eax
+   3016e:	82                   	nemu_trap 
+   3016f:	c7 c0 68 30 03 00    	mov    $0x33068,%eax
+   30175:	8a 40 01             	mov    0x1(%eax),%al
+   30178:	3c 80                	cmp    $0x80,%al
+   3017a:	74 06                	je     30182 <main+0x17d>
+   3017c:	b8 01 00 00 00       	mov    $0x1,%eax
+   30181:	82                   	nemu_trap 
+   30182:	c7 c0 40 30 03 00    	mov    $0x33040,%eax
+   30188:	8b 00                	mov    (%eax),%eax
+   3018a:	83 f8 80             	cmp    $0xffffff80,%eax
+   3018d:	74 06                	je     30195 <main+0x190>
+   3018f:	b8 01 00 00 00       	mov    $0x1,%eax
+   30194:	82                   	nemu_trap 
+   30195:	b8 00 00 00 00       	mov    $0x0,%eax
+   3019a:	82                   	nemu_trap 
+   3019b:	b8 00 00 00 00       	mov    $0x0,%eax
+   301a0:	5d                   	pop    %ebp
+   301a1:	c3                   	ret    
+
+000301a2 <__x86.get_pc_thunk.dx>:
+   301a2:	8b 14 24             	mov    (%esp),%edx
+   301a5:	c3                   	ret    

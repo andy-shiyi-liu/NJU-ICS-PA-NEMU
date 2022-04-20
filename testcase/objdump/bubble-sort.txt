@@ -1,0 +1,97 @@
+
+testcase/bin/bubble-sort:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00030000 <start>:
+   30000:	e9 8a 00 00 00       	jmp    3008f <main>
+
+00030005 <bubble_sort>:
+   30005:	55                   	push   %ebp
+   30006:	89 e5                	mov    %esp,%ebp
+   30008:	83 ec 10             	sub    $0x10,%esp
+   3000b:	e8 fa 00 00 00       	call   3010a <__x86.get_pc_thunk.ax>
+   30010:	05 f0 2f 00 00       	add    $0x2ff0,%eax
+   30015:	c7 45 f8 00 00 00 00 	movl   $0x0,-0x8(%ebp)
+   3001c:	eb 67                	jmp    30085 <bubble_sort+0x80>
+   3001e:	c7 45 fc 00 00 00 00 	movl   $0x0,-0x4(%ebp)
+   30025:	eb 4e                	jmp    30075 <bubble_sort+0x70>
+   30027:	8b 55 fc             	mov    -0x4(%ebp),%edx
+   3002a:	8b 8c 90 20 00 00 00 	mov    0x20(%eax,%edx,4),%ecx
+   30031:	8b 55 fc             	mov    -0x4(%ebp),%edx
+   30034:	42                   	inc    %edx
+   30035:	8b 94 90 20 00 00 00 	mov    0x20(%eax,%edx,4),%edx
+   3003c:	39 d1                	cmp    %edx,%ecx
+   3003e:	7e 32                	jle    30072 <bubble_sort+0x6d>
+   30040:	8b 55 fc             	mov    -0x4(%ebp),%edx
+   30043:	8b 94 90 20 00 00 00 	mov    0x20(%eax,%edx,4),%edx
+   3004a:	89 55 f4             	mov    %edx,-0xc(%ebp)
+   3004d:	8b 55 fc             	mov    -0x4(%ebp),%edx
+   30050:	42                   	inc    %edx
+   30051:	8b 8c 90 20 00 00 00 	mov    0x20(%eax,%edx,4),%ecx
+   30058:	8b 55 fc             	mov    -0x4(%ebp),%edx
+   3005b:	89 8c 90 20 00 00 00 	mov    %ecx,0x20(%eax,%edx,4)
+   30062:	8b 55 fc             	mov    -0x4(%ebp),%edx
+   30065:	8d 4a 01             	lea    0x1(%edx),%ecx
+   30068:	8b 55 f4             	mov    -0xc(%ebp),%edx
+   3006b:	89 94 88 20 00 00 00 	mov    %edx,0x20(%eax,%ecx,4)
+   30072:	ff 45 fc             	incl   -0x4(%ebp)
+   30075:	ba 63 00 00 00       	mov    $0x63,%edx
+   3007a:	2b 55 f8             	sub    -0x8(%ebp),%edx
+   3007d:	39 55 fc             	cmp    %edx,-0x4(%ebp)
+   30080:	7c a5                	jl     30027 <bubble_sort+0x22>
+   30082:	ff 45 f8             	incl   -0x8(%ebp)
+   30085:	83 7d f8 63          	cmpl   $0x63,-0x8(%ebp)
+   30089:	7e 93                	jle    3001e <bubble_sort+0x19>
+   3008b:	90                   	nop
+   3008c:	90                   	nop
+   3008d:	c9                   	leave  
+   3008e:	c3                   	ret    
+
+0003008f <main>:
+   3008f:	55                   	push   %ebp
+   30090:	89 e5                	mov    %esp,%ebp
+   30092:	53                   	push   %ebx
+   30093:	83 ec 10             	sub    $0x10,%esp
+   30096:	e8 73 00 00 00       	call   3010e <__x86.get_pc_thunk.bx>
+   3009b:	81 c3 65 2f 00 00    	add    $0x2f65,%ebx
+   300a1:	e8 5f ff ff ff       	call   30005 <bubble_sort>
+   300a6:	c7 45 f8 00 00 00 00 	movl   $0x0,-0x8(%ebp)
+   300ad:	eb 18                	jmp    300c7 <main+0x38>
+   300af:	8b 45 f8             	mov    -0x8(%ebp),%eax
+   300b2:	8b 84 83 20 00 00 00 	mov    0x20(%ebx,%eax,4),%eax
+   300b9:	39 45 f8             	cmp    %eax,-0x8(%ebp)
+   300bc:	74 06                	je     300c4 <main+0x35>
+   300be:	b8 01 00 00 00       	mov    $0x1,%eax
+   300c3:	82                   	nemu_trap 
+   300c4:	ff 45 f8             	incl   -0x8(%ebp)
+   300c7:	83 7d f8 63          	cmpl   $0x63,-0x8(%ebp)
+   300cb:	7e e2                	jle    300af <main+0x20>
+   300cd:	e8 33 ff ff ff       	call   30005 <bubble_sort>
+   300d2:	c7 45 f8 00 00 00 00 	movl   $0x0,-0x8(%ebp)
+   300d9:	eb 18                	jmp    300f3 <main+0x64>
+   300db:	8b 45 f8             	mov    -0x8(%ebp),%eax
+   300de:	8b 84 83 20 00 00 00 	mov    0x20(%ebx,%eax,4),%eax
+   300e5:	39 45 f8             	cmp    %eax,-0x8(%ebp)
+   300e8:	74 06                	je     300f0 <main+0x61>
+   300ea:	b8 01 00 00 00       	mov    $0x1,%eax
+   300ef:	82                   	nemu_trap 
+   300f0:	ff 45 f8             	incl   -0x8(%ebp)
+   300f3:	83 7d f8 63          	cmpl   $0x63,-0x8(%ebp)
+   300f7:	7e e2                	jle    300db <main+0x4c>
+   300f9:	b8 00 00 00 00       	mov    $0x0,%eax
+   300fe:	82                   	nemu_trap 
+   300ff:	b8 00 00 00 00       	mov    $0x0,%eax
+   30104:	83 c4 10             	add    $0x10,%esp
+   30107:	5b                   	pop    %ebx
+   30108:	5d                   	pop    %ebp
+   30109:	c3                   	ret    
+
+0003010a <__x86.get_pc_thunk.ax>:
+   3010a:	8b 04 24             	mov    (%esp),%eax
+   3010d:	c3                   	ret    
+
+0003010e <__x86.get_pc_thunk.bx>:
+   3010e:	8b 1c 24             	mov    (%esp),%ebx
+   30111:	c3                   	ret    

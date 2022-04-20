@@ -1,0 +1,4 @@
+Hostname: 114.212.10.200
+Port: 5227
+Username: pa201180078
+Password: Ls********2 (freq used passwd)

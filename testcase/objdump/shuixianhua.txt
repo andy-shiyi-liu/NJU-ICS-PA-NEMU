@@ -1,0 +1,116 @@
+
+testcase/bin/shuixianhua:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00030000 <start>:
+   30000:	e9 19 00 00 00       	jmp    3001e <main>
+
+00030005 <cube>:
+   30005:	55                   	push   %ebp
+   30006:	89 e5                	mov    %esp,%ebp
+   30008:	e8 14 01 00 00       	call   30121 <__x86.get_pc_thunk.ax>
+   3000d:	05 f3 2f 00 00       	add    $0x2ff3,%eax
+   30012:	8b 45 08             	mov    0x8(%ebp),%eax
+   30015:	0f af c0             	imul   %eax,%eax
+   30018:	0f af 45 08          	imul   0x8(%ebp),%eax
+   3001c:	5d                   	pop    %ebp
+   3001d:	c3                   	ret    
+
+0003001e <main>:
+   3001e:	55                   	push   %ebp
+   3001f:	89 e5                	mov    %esp,%ebp
+   30021:	56                   	push   %esi
+   30022:	53                   	push   %ebx
+   30023:	51                   	push   %ecx
+   30024:	83 ec 20             	sub    $0x20,%esp
+   30027:	8d 4d 08             	lea    0x8(%ebp),%ecx
+   3002a:	e8 f6 00 00 00       	call   30125 <__x86.get_pc_thunk.bx>
+   3002f:	81 c3 d1 2f 00 00    	add    $0x2fd1,%ebx
+   30035:	c7 45 ec 00 00 00 00 	movl   $0x0,-0x14(%ebp)
+   3003c:	c7 45 f0 64 00 00 00 	movl   $0x64,-0x10(%ebp)
+   30043:	e9 ad 00 00 00       	jmp    300f5 <main+0xd7>
+   30048:	8b 4d f0             	mov    -0x10(%ebp),%ecx
+   3004b:	b8 1f 85 eb 51       	mov    $0x51eb851f,%eax
+   30050:	f7 e9                	imul   %ecx
+   30052:	c1 fa 05             	sar    $0x5,%edx
+   30055:	89 c8                	mov    %ecx,%eax
+   30057:	c1 f8 1f             	sar    $0x1f,%eax
+   3005a:	29 c2                	sub    %eax,%edx
+   3005c:	89 d0                	mov    %edx,%eax
+   3005e:	89 45 e8             	mov    %eax,-0x18(%ebp)
+   30061:	8b 4d f0             	mov    -0x10(%ebp),%ecx
+   30064:	b8 67 66 66 66       	mov    $0x66666667,%eax
+   30069:	f7 e9                	imul   %ecx
+   3006b:	c1 fa 02             	sar    $0x2,%edx
+   3006e:	89 c8                	mov    %ecx,%eax
+   30070:	c1 f8 1f             	sar    $0x1f,%eax
+   30073:	89 d1                	mov    %edx,%ecx
+   30075:	29 c1                	sub    %eax,%ecx
+   30077:	b8 67 66 66 66       	mov    $0x66666667,%eax
+   3007c:	f7 e9                	imul   %ecx
+   3007e:	c1 fa 02             	sar    $0x2,%edx
+   30081:	89 c8                	mov    %ecx,%eax
+   30083:	c1 f8 1f             	sar    $0x1f,%eax
+   30086:	29 c2                	sub    %eax,%edx
+   30088:	89 d0                	mov    %edx,%eax
+   3008a:	89 45 e4             	mov    %eax,-0x1c(%ebp)
+   3008d:	8b 55 e4             	mov    -0x1c(%ebp),%edx
+   30090:	89 d0                	mov    %edx,%eax
+   30092:	c1 e0 02             	shl    $0x2,%eax
+   30095:	01 d0                	add    %edx,%eax
+   30097:	01 c0                	add    %eax,%eax
+   30099:	29 c1                	sub    %eax,%ecx
+   3009b:	89 c8                	mov    %ecx,%eax
+   3009d:	89 45 e4             	mov    %eax,-0x1c(%ebp)
+   300a0:	8b 45 f0             	mov    -0x10(%ebp),%eax
+   300a3:	b9 0a 00 00 00       	mov    $0xa,%ecx
+   300a8:	99                   	cltd   
+   300a9:	f7 f9                	idiv   %ecx
+   300ab:	89 55 e0             	mov    %edx,-0x20(%ebp)
+   300ae:	ff 75 e8             	pushl  -0x18(%ebp)
+   300b1:	e8 4f ff ff ff       	call   30005 <cube>
+   300b6:	83 c4 04             	add    $0x4,%esp
+   300b9:	89 c6                	mov    %eax,%esi
+   300bb:	ff 75 e4             	pushl  -0x1c(%ebp)
+   300be:	e8 42 ff ff ff       	call   30005 <cube>
+   300c3:	83 c4 04             	add    $0x4,%esp
+   300c6:	01 c6                	add    %eax,%esi
+   300c8:	ff 75 e0             	pushl  -0x20(%ebp)
+   300cb:	e8 35 ff ff ff       	call   30005 <cube>
+   300d0:	83 c4 04             	add    $0x4,%esp
+   300d3:	01 f0                	add    %esi,%eax
+   300d5:	39 45 f0             	cmp    %eax,-0x10(%ebp)
+   300d8:	75 18                	jne    300f2 <main+0xd4>
+   300da:	8b 45 ec             	mov    -0x14(%ebp),%eax
+   300dd:	8b 84 83 0c 00 00 00 	mov    0xc(%ebx,%eax,4),%eax
+   300e4:	39 45 f0             	cmp    %eax,-0x10(%ebp)
+   300e7:	74 06                	je     300ef <main+0xd1>
+   300e9:	b8 01 00 00 00       	mov    $0x1,%eax
+   300ee:	82                   	nemu_trap 
+   300ef:	ff 45 ec             	incl   -0x14(%ebp)
+   300f2:	ff 45 f0             	incl   -0x10(%ebp)
+   300f5:	81 7d f0 e7 03 00 00 	cmpl   $0x3e7,-0x10(%ebp)
+   300fc:	0f 8e 46 ff ff ff    	jle    30048 <main+0x2a>
+   30102:	83 7d ec 04          	cmpl   $0x4,-0x14(%ebp)
+   30106:	74 06                	je     3010e <main+0xf0>
+   30108:	b8 01 00 00 00       	mov    $0x1,%eax
+   3010d:	82                   	nemu_trap 
+   3010e:	b8 00 00 00 00       	mov    $0x0,%eax
+   30113:	82                   	nemu_trap 
+   30114:	b8 00 00 00 00       	mov    $0x0,%eax
+   30119:	8d 65 f4             	lea    -0xc(%ebp),%esp
+   3011c:	59                   	pop    %ecx
+   3011d:	5b                   	pop    %ebx
+   3011e:	5e                   	pop    %esi
+   3011f:	5d                   	pop    %ebp
+   30120:	c3                   	ret    
+
+00030121 <__x86.get_pc_thunk.ax>:
+   30121:	8b 04 24             	mov    (%esp),%eax
+   30124:	c3                   	ret    
+
+00030125 <__x86.get_pc_thunk.bx>:
+   30125:	8b 1c 24             	mov    (%esp),%ebx
+   30128:	c3                   	ret    
