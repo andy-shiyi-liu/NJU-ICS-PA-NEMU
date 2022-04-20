@@ -3,7 +3,7 @@
         "args": [
             //"--kernel",
             "--testcase",
-            "mine"
+            "add"
         ],
         "cwd": "/home/ubuntu/work/ICS_PA/"
     },
