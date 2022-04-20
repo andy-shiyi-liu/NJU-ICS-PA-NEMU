@@ -176,6 +176,7 @@ submit_pa-4-3:
 # DO NOT call the following targets directly
 
 test_batch-2-2-mute:
+	./nemu/nemu --autorun --testcase mine --kernel
 	./nemu/nemu --autorun --testcase mov --kernel
 	./nemu/nemu --autorun --testcase mov-cmp --kernel
 	./nemu/nemu --autorun --testcase mov-c --kernel
