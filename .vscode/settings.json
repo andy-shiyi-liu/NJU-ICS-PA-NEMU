@@ -18,6 +18,7 @@
         "page.h": "c",
         "cache.h": "c",
         "nemu.h": "c",
-        "breakpoint.h": "c"
+        "breakpoint.h": "c",
+        "memory.h": "c"
     }
 }

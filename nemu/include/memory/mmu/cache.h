@@ -3,6 +3,10 @@
 
 #include "nemu.h"
 
+#ifndef __MEMORY_H__
+#include "memory/memory.h"
+#endif
+
 #define CACHE_UNIT_SIZE_INDEX 6 // 2^CACHE_UNIT_SIZE_INDEX Byte memory capacity within 1 line of cache
 
 typedef struct CacheLine
