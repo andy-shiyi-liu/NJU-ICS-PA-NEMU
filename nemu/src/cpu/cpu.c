@@ -4,7 +4,9 @@
 #include "cpu/instr.h"
 #include "memory/memory.h"
 #include "monitor/breakpoint.h"
+#ifndef __STDIO_H_
 #include <stdio.h>
+#endif
 #include <assert.h>
 
 CPU_STATE cpu;

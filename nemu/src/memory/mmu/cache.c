@@ -2,11 +2,12 @@
 #ifndef __STDLIB_H_
 #include <stdlib.h>
 #endif
+#ifndef __STDIO_H_
+#include <stdio.h>
+#endif
 
 #define CACHE_LINE_TOTAL_NUM 1024
 #define SET_ASSO_NUM 8
-
-int cnt = 0;
 
 struct CacheLine cache[CACHE_LINE_TOTAL_NUM];
 
@@ -66,14 +67,14 @@ static uint32_t get_random_replace_line_num(uint32_t groupNum)
 	return randNum;
 }
 
-static void load_cache_line(uint32_t lineNum, uint32_t tag, uint32_t paddr)
+static void load_cache_line(int32_t lineNum, uint32_t tag, uint32_t paddr)
 {
 	cache[lineNum].valid = true;
 	cache[lineNum].tag = tag;
 
 	// find the corrsponding start addr of the block
 	paddr = paddr >> CACHE_UNIT_SIZE_INDEX;
-	paddr = paddr << CACHE_UNIT_SIZE_INDEX; 
+	paddr = paddr << CACHE_UNIT_SIZE_INDEX;
 
 	for (uint32_t i = 0; i < (1 << CACHE_UNIT_SIZE_INDEX); i++)
 	{
@@ -92,23 +93,23 @@ static uint32_t replace_line_data(uint32_t paddr, uint32_t groupNum, uint32_t ta
 	return emptyLineNum;
 }
 
-static uint32_t read_cache_data(uint32_t lineNum, uint32_t inBlockAddr, uint32_t len)
+static uint32_t read_cache_data(int32_t lineNum, uint32_t inBlockAddr, uint32_t len)
 {
 	uint32_t result = 0;
 	int32_t i = 0;
 	for (i = len - 1; i >= 0; i--) // caution: little endian!!
 	{
-		if (inBlockAddr+i > (1 << CACHE_UNIT_SIZE_INDEX)) // cross line data
+		if (inBlockAddr + i > (1 << CACHE_UNIT_SIZE_INDEX)) // cross line data
 		{
 			assert("attempting to read cross line data!");
 		}
 		result = result << 8; // 8: byte to bit
-		result += cache[lineNum].data[inBlockAddr+i];
+		result += cache[lineNum].data[inBlockAddr + i];
 	}
 	return result;
 }
 
-static void write_cache_data(uint32_t lineNum, uint32_t inBlockAddr, uint32_t data, uint32_t len)
+static void write_cache_data(int32_t lineNum, uint32_t inBlockAddr, uint32_t data, uint32_t len)
 {
 	uint32_t i = 0;
 	for (i = 0; i < len; i++)
@@ -117,6 +118,7 @@ static void write_cache_data(uint32_t lineNum, uint32_t inBlockAddr, uint32_t da
 		{
 			assert("attempting to read cross line data!");
 		}
+		assert(lineNum < CACHE_LINE_TOTAL_NUM);
 		cache[lineNum].data[inBlockAddr] = data & 0xff; // 0xff: write 1 byte data
 		data = (data >> 8);								// 8: byte to bit.
 		inBlockAddr++;
@@ -138,41 +140,51 @@ void init_cache()
 void cache_write(paddr_t paddr, size_t len, uint32_t data)
 {
 	// implement me in PA 3-1
-	assert(len <= 4);
+	assert(len <= 4 || len >= 0);
+	if (len == 0)
+	{
+		return;
+	}
 
 	uint32_t tag = get_tag(paddr);
 	uint32_t inBlockAddr = get_in_block_addr(paddr);
 	uint32_t groupNum = get_cache_group_addr(paddr);
 
-	uint32_t lineNum = get_line_num(groupNum, tag);
+	int32_t lineNum = get_line_num(groupNum, tag);
 
 	// case 1: memory access within 1 line
-	if (get_block_addr(paddr) == get_block_addr(paddr + len))
+	if (get_block_addr(paddr) == get_block_addr(paddr + len - 1))
 	{
-		if (lineNum == -1) // if cache hit, update cache data
+		if (lineNum != -1) // if cache hit, update cache data
 		{
 			write_cache_data(lineNum, inBlockAddr, data, len);
 		}
 		// write through, write mem data for all time.
 		hw_mem_write(paddr, len, data);
+		uint32_t memData = hw_mem_read(paddr, len);
+		assert(memData == data);
 	}
 	else // case 2: cross-line memory access
 	{
-		uint32_t inBlockLen = len - ((1 << CACHE_UNIT_SIZE_INDEX) - inBlockAddr);
-		uint32_t nextBlockLen = len - inBlockLen;
+		int32_t inBlockLen = (1 << CACHE_UNIT_SIZE_INDEX) - inBlockAddr;
+		int32_t nextBlockLen = len - inBlockLen;
 
 		assert(inBlockLen > 0 && inBlockLen < len);
 		assert(nextBlockLen > 0);
 
-		uint32_t nextBlockData = data >> inBlockLen; // get higher bits of data for next block
-		uint32_t inBlockData = data - nextBlockData; // subtract to get data in this blok
-
-		assert(nextBlockData > 0);
-		assert(inBlockData > 0);
+		uint32_t inBlockData = (data & (0xffffffff >> (32 - 8 * inBlockLen)));
+		uint32_t nextBlockData = (data & (0xffffffff << (8*inBlockLen))) >>(8*inBlockLen); 
 
 		// little endian
-		cache_write(paddr, inBlockData, inBlockLen);
-		cache_write(paddr + inBlockLen, nextBlockData, nextBlockLen);
+		cache_write(paddr, inBlockLen, inBlockData);
+		uint32_t mask = 0xffffffff;
+		mask = mask >> (32 - (inBlockLen * 8));
+		uint32_t memData = hw_mem_read(paddr, len) & mask;
+		uint32_t maskedData = data & mask;
+		assert(memData == maskedData);
+		cache_write(paddr + inBlockLen, nextBlockLen, nextBlockData);
+		memData = hw_mem_read(paddr, len);
+		assert(memData == data);
 	}
 }
 
@@ -180,8 +192,11 @@ void cache_write(paddr_t paddr, size_t len, uint32_t data)
 uint32_t cache_read(paddr_t paddr, size_t len)
 {
 	// implement me in PA 3-1
-	assert(len <= 4);
-	cnt +=1;
+	assert(len <= 4 || len >= 0);
+	if (len == 0)
+	{
+		return 0;
+	}
 
 	uint32_t tag = get_tag(paddr);
 	uint32_t inBlockAddr = get_in_block_addr(paddr);
@@ -200,13 +215,13 @@ uint32_t cache_read(paddr_t paddr, size_t len)
 	{
 		result = read_cache_data(lineNum, inBlockAddr, len);
 
-`		assert(result == hw_mem_read(paddr, len));
+		assert(result == hw_mem_read(paddr, len));
 		return result;
 	}
 	else // case 2: cross-line memory access
 	{
-		uint32_t inBlockDataLen = len - ((1 << CACHE_UNIT_SIZE_INDEX) - inBlockAddr);
-		uint32_t nextBlockDataLen = len - inBlockDataLen;
+		int32_t inBlockDataLen = (1 << CACHE_UNIT_SIZE_INDEX) - inBlockAddr;
+		int32_t nextBlockDataLen = len - inBlockDataLen;
 
 		assert(inBlockDataLen > 0 && inBlockDataLen < len);
 		assert(nextBlockDataLen > 0);
