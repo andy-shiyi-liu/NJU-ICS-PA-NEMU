@@ -43,4 +43,8 @@ uint32_t instr_fetch(vaddr_t vaddr, size_t len);
 //void mem_print(uint32_t addr, size_t len);
 uint8_t *get_mem_addr();
 
+void hw_mem_write(paddr_t paddr, size_t len, uint32_t data);
+
+uint32_t hw_mem_read(paddr_t paddr, size_t len);
+
 #endif
