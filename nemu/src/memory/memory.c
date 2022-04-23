@@ -22,13 +22,22 @@ void hw_mem_write(paddr_t paddr, size_t len, uint32_t data)
 uint32_t paddr_read(paddr_t paddr, size_t len)
 {
 	uint32_t ret = 0;
+#ifdef CACHE_ENABLED
+	ret = cache_read(paddr,len);
+#else
 	ret = hw_mem_read(paddr, len);
+#endif
 	return ret;
 }
 
 void paddr_write(paddr_t paddr, size_t len, uint32_t data)
 {
+	#ifdef CACHE_ENABLED
+	cache_write(paddr, len, data);
+	#else
 	hw_mem_write(paddr, len, data);
+	#endif
+	assert(hw_mem_read(paddr, len) == data);
 }
 
 uint32_t laddr_read(laddr_t laddr, size_t len)
@@ -57,6 +66,10 @@ void init_mem()
 {
 	// clear the memory on initiation
 	memset(hw_mem, 0, MEM_SIZE_B);
+
+#ifdef CACHE_ENABLED
+	init_cache();
+#endif
 
 #ifdef TLB_ENABLED
 	make_all_tlb();
