@@ -37,7 +37,6 @@ void paddr_write(paddr_t paddr, size_t len, uint32_t data)
 	#else
 	hw_mem_write(paddr, len, data);
 	#endif
-	assert(hw_mem_read(paddr, len) == data);
 }
 
 uint32_t laddr_read(laddr_t laddr, size_t len)

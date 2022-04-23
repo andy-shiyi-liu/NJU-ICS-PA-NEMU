@@ -1,9 +1,9 @@
 {
     "cmake.debugConfig": {
         "args": [
-            // "--kernel",
+            "--kernel",
             "--testcase",
-            "add",
+            "mov-cmp",
             "--autorun"
         ],
         "cwd": "/home/ubuntu/work/ICS_PA/"
@@ -17,6 +17,7 @@
         "string_view": "c",
         "page.h": "c",
         "cache.h": "c",
-        "nemu.h": "c"
+        "nemu.h": "c",
+        "breakpoint.h": "c"
     }
 }
