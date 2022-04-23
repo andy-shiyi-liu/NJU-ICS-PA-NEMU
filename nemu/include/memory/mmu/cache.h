@@ -3,6 +3,15 @@
 
 #include "nemu.h"
 
+#define CACHE_UNIT_SIZE_INDEX 6 // 2^CACHE_UNIT_SIZE_INDEX Byte memory capacity within 1 line of cache
+
+typedef struct CacheLine
+{
+    uint8_t data[1 << CACHE_UNIT_SIZE_INDEX]; // 64 Byte memory size
+    uint32_t tag;
+    bool valid;
+} CacheLine;
+
 #ifdef CACHE_ENABLED
 
 // init the cache
