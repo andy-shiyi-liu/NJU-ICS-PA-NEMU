@@ -136,7 +136,7 @@ static bool make_token(char *e)
 		{
 			if (nr_token >= MAX_TOKEN_NUM)
 			{
-				printf("Exceeded max token number!\n");
+				// printf("Exceeded max token number!\n");
 				return false;
 			}
 			if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0)
@@ -144,7 +144,7 @@ static bool make_token(char *e)
 				char *substr_start = e + position;
 				int substr_len = pmatch.rm_eo;
 
-				// printf("match regex[%d] at position %d with len %d: %.*s\n", i, position, substr_len, substr_len, substr_start);
+				// // printf("match regex[%d] at position %d with len %d: %.*s\n", i, position, substr_len, substr_len, substr_start);
 				position += substr_len;
 
 				/* TODO: Now a new token is recognized with rules[i].
@@ -153,7 +153,7 @@ static bool make_token(char *e)
 
 				if (substr_len >= MAX_TOKEN_STR_LEN)
 				{
-					printf("Exceeded max token string length!\n");
+					// printf("Exceeded max token string length!\n");
 					return 0;
 				}
 
@@ -199,7 +199,7 @@ static bool make_token(char *e)
 
 		if (i == NR_REGEX)
 		{
-			printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
+			// printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
 			return false;
 		}
 	}
@@ -213,12 +213,11 @@ static bool check_valid_parentheses(uint32_t start, uint32_t end, bool *success)
 	{
 		return 0;
 	}
-	// printf("start: %d, end: %d.\n", start, end);
 	uint32_t parentheses_depth = 0;
 	int i = start;
 	for (; i <= end && parentheses_depth >= 0; i++)
 	{
-		// printf("parentheses_depth: %d\n",parentheses_depth);
+		// // printf("parentheses_depth: %d\n",parentheses_depth);
 		if (tokens[i].type == '(')
 			parentheses_depth++;
 		else if (tokens[i].type == ')')
@@ -226,7 +225,7 @@ static bool check_valid_parentheses(uint32_t start, uint32_t end, bool *success)
 	}
 	if (parentheses_depth != 0 || i != end + 1)
 	{
-		printf("Syntax ERROR: unpaired parentheses!\n");
+		// printf("Syntax ERROR: unpaired parentheses!\n");
 		*success = false;
 		return false;
 	}
@@ -234,6 +233,36 @@ static bool check_valid_parentheses(uint32_t start, uint32_t end, bool *success)
 	{
 		return true;
 	}
+}
+
+inline static uint32_t skip_parentheses(uint32_t start, uint32_t end, bool *success)
+{
+	if (*success == false)
+	{
+		return 0;
+	}
+	if (tokens[start].type != '(')
+	{
+		// printf("Internal Eval ERROR!\n");
+		assert(0);
+	}
+	uint32_t parentheses_depth = 1;
+	int i = start + 1;
+	for (; i <= end && parentheses_depth > 0; i++)
+	{
+		// // printf("parentheses_depth: %d\n",parentheses_depth);
+		if (tokens[i].type == '(')
+			parentheses_depth++;
+		else if (tokens[i].type == ')')
+			parentheses_depth--;
+	}
+	if (parentheses_depth != 0)
+	{
+		// printf("Syntax ERROR: unpaired parentheses!\n");
+		*success = false;
+		return false;
+	}
+	return i;
 }
 
 static bool check_pair_parentheses(uint32_t start, uint32_t end, bool *success)
@@ -246,42 +275,13 @@ static bool check_pair_parentheses(uint32_t start, uint32_t end, bool *success)
 	{
 		return false;
 	}
-	if (tokens[start].type == '(' && tokens[end].type == ')') // pair of parentheses
+	if (tokens[start].type == '(' && skip_parentheses(start, end, success) == end+1) // pair of parentheses
 	{
 		return true;
 	}
 	return false;
 }
 
-inline static uint32_t skip_parentheses(uint32_t start, uint32_t end, bool *success)
-{
-	if (*success == false)
-	{
-		return 0;
-	}
-	if (tokens[start].type != '(')
-	{
-		printf("Internal Eval ERROR!\n");
-		assert(0);
-	}
-	uint32_t parentheses_depth = 1;
-	int i = start + 1;
-	for (; i <= end && parentheses_depth > 0; i++)
-	{
-		// printf("parentheses_depth: %d\n",parentheses_depth);
-		if (tokens[i].type == '(')
-			parentheses_depth++;
-		else if (tokens[i].type == ')')
-			parentheses_depth--;
-	}
-	if (parentheses_depth != 0)
-	{
-		printf("Syntax ERROR: unpaired parentheses!\n");
-		*success = false;
-		return false;
-	}
-	return i;
-}
 
 static uint32_t find_specific_last_op(uint32_t start, uint32_t end, uint32_t op, bool *success, bool *found)
 {
@@ -300,6 +300,29 @@ static uint32_t find_specific_last_op(uint32_t start, uint32_t end, uint32_t op,
 		{
 			result = i;
 			*found = true;
+		}
+	}
+	return result;
+}
+
+static uint32_t find_specific_first_op(uint32_t start, uint32_t end, uint32_t op, bool *success, bool *found)
+{
+	if (*success == false)
+	{
+		return 0;
+	}
+	uint32_t result = start;
+	for (int i = start; i <= end; i++)
+	{
+		if (tokens[i].type == '(')
+		{
+			i = skip_parentheses(i, end, success);
+		}
+		if (tokens[i].type == op)
+		{
+			result = i;
+			*found = true;
+			return result;
 		}
 	}
 	return result;
@@ -330,7 +353,7 @@ static uint32_t find_dom_op(uint32_t start, uint32_t end, bool *success)
 	result = find_specific_last_op(start, end, OR, success, &found);
 	if (found == true)
 	{
-		// printf("Dom_op level 1: index: %d, oprand: %c\n", result, tokens[result].type);
+		// // printf("Dom_op level 1: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
@@ -338,7 +361,7 @@ static uint32_t find_dom_op(uint32_t start, uint32_t end, bool *success)
 	result = find_specific_last_op(start, end, AND, success, &found);
 	if (found == true)
 	{
-		// printf("Dom_op level 2: index: %d, oprand: %c\n", result, tokens[result].type);
+		// // printf("Dom_op level 2: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
@@ -346,7 +369,7 @@ static uint32_t find_dom_op(uint32_t start, uint32_t end, bool *success)
 	result = find_specific_last_op(start, end, '|', success, &found);
 	if (found == true)
 	{
-		// printf("Dom_op level 3: index: %d, oprand: %c\n", result, tokens[result].type);
+		// // printf("Dom_op level 3: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
@@ -354,7 +377,7 @@ static uint32_t find_dom_op(uint32_t start, uint32_t end, bool *success)
 	result = find_specific_last_op(start, end, '^', success, &found);
 	if (found == true)
 	{
-		// printf("Dom_op level 4: index: %d, oprand: %c\n", result, tokens[result].type);
+		// // printf("Dom_op level 4: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
@@ -362,7 +385,7 @@ static uint32_t find_dom_op(uint32_t start, uint32_t end, bool *success)
 	result = find_specific_last_op(start, end, '&', success, &found);
 	if (found == true)
 	{
-		// printf("Dom_op level 5: index: %d, oprand: %c\n", result, tokens[result].type);
+		// // printf("Dom_op level 5: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
@@ -370,7 +393,7 @@ static uint32_t find_dom_op(uint32_t start, uint32_t end, bool *success)
 	result = max(find_specific_last_op(start, end, EQ, success, &found), find_specific_last_op(start, end, NEQ, success, &found));
 	if (found == true)
 	{
-		// printf("Dom_op level 6: index: %d, oprand: %c\n", result, tokens[result].type);
+		// // printf("Dom_op level 6: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
@@ -380,7 +403,7 @@ static uint32_t find_dom_op(uint32_t start, uint32_t end, bool *success)
 	result = max(result, find_specific_last_op(start, end, '>', success, &found));
 	if (found == true)
 	{
-		// printf("Dom_op level 7: index: %d, oprand: %c\n", result, tokens[result].type);
+		// // printf("Dom_op level 7: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
@@ -388,7 +411,7 @@ static uint32_t find_dom_op(uint32_t start, uint32_t end, bool *success)
 	result = max(find_specific_last_op(start, end, SHL, success, &found), find_specific_last_op(start, end, SHR, success, &found));
 	if (found == true)
 	{
-		// printf("Dom_op level 8: index: %d, oprand: %c\n", result, tokens[result].type);
+		// // printf("Dom_op level 8: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
@@ -396,7 +419,7 @@ static uint32_t find_dom_op(uint32_t start, uint32_t end, bool *success)
 	result = max(find_specific_last_op(start, end, '+', success, &found), find_specific_last_op(start, end, '-', success, &found));
 	if (found == true)
 	{
-		// printf("Dom_op level 9: index: %d, oprand: %c\n", result, tokens[result].type);
+		// // printf("Dom_op level 9: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
@@ -405,20 +428,20 @@ static uint32_t find_dom_op(uint32_t start, uint32_t end, bool *success)
 	result = max(result, find_specific_last_op(start, end, '%', success, &found));
 	if (found == true)
 	{
-		// printf("Dom_op level 10: index: %d, oprand: %c\n", result, tokens[result].type);
+		// // printf("Dom_op level 10: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
 	// level 11: ~ ! *(DREF)
-	result = max(find_specific_last_op(start, end, '~', success, &found), find_specific_last_op(start, end, '!', success, &found));
-	result = max(result, find_specific_last_op(start, end, DREF, success, &found));
+	result = max(find_specific_first_op(start, end, '~', success, &found), find_specific_first_op(start, end, '!', success, &found));
+	result = max(result, find_specific_first_op(start, end, DREF, success, &found));
 	if (found == true)
 	{
-		// printf("Dom_op level 11: index: %d, oprand: %c\n", result, tokens[result].type);
+		// // printf("Dom_op level 11: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
-	printf("ERROR: no valid oprand found!\n");
+	// printf("ERROR: no valid oprand found!\n");
 	*success = false;
 	return 0;
 }
@@ -471,7 +494,7 @@ static inline uint32_t get_reg32(uint32_t index)
 	}
 	else
 	{
-		printf("Internal ERROR: no register matched!\n");
+		// printf("Internal ERROR: no register matched!\n");
 		assert(0);
 	}
 }
@@ -512,7 +535,7 @@ static inline uint32_t get_reg16(uint32_t index)
 	}
 	else
 	{
-		printf("Internal ERROR: no register matched!\n");
+		// printf("Internal ERROR: no register matched!\n");
 		assert(0);
 	}
 }
@@ -553,7 +576,7 @@ static inline uint32_t get_reg8(uint32_t index)
 	}
 	else
 	{
-		printf("Internal ERROR: no register matched!\n");
+		// printf("Internal ERROR: no register matched!\n");
 		assert(0);
 	}
 }
@@ -567,7 +590,7 @@ static uint32_t eval_tokens(uint32_t start, uint32_t end, bool *success)
 	if (start > end)
 	{
 		/* Bad expression */
-		printf("Token eval ERROR: start index > end index!\n");
+		// printf("Token eval ERROR: start index > end index!\n");
 		*success = false;
 		return 0;
 	}
@@ -601,7 +624,7 @@ static uint32_t eval_tokens(uint32_t start, uint32_t end, bool *success)
 		else if (tokens[start].type == NUM8_1)
 		{
 			strupr(tokens[start].str);
-			return strtoul(tokens[start].str, &temp, 8);
+			return strtoul(&tokens[start].str[2], &temp, 8);
 		}
 		else if (tokens[start].type == NUM8_2)
 		{
@@ -612,7 +635,7 @@ static uint32_t eval_tokens(uint32_t start, uint32_t end, bool *success)
 		else if (tokens[start].type == NUM2_1)
 		{
 			strupr(tokens[start].str);
-			return strtoul(tokens[start].str, &temp, 2);
+			return strtoul(&tokens[start].str[2], &temp, 2);
 		}
 		else if (tokens[start].type == NUM2_2)
 		{
@@ -637,14 +660,14 @@ static uint32_t eval_tokens(uint32_t start, uint32_t end, bool *success)
 			uint32_t result = look_up_symtab(tokens[start].str, success);
 			if (*success == false)
 			{
-				printf("Symbol ERROR: unmatch with symbol table!\n");
+				// printf("Symbol ERROR: unmatch with symbol table!\n");
 				return false;
 			}
 			return result;
 		}
 		else
 		{
-			printf("Syntax ERROR: wrong single token type!\n");
+			// printf("Syntax ERROR: wrong single token type!\n");
 			*success = false;
 			return 0;
 		}
@@ -734,20 +757,20 @@ static uint32_t eval_tokens(uint32_t start, uint32_t end, bool *success)
 			value1 = eval_tokens(start, dom_op_index - 1, success);
 			return value1 % value2;
 		case DREF:
-			if (value1 + 4 >= MEM_SIZE_B)
+			if (value2 + 4 >= MEM_SIZE_B)
 			{
-				printf("ERROR: Memory read overflow!\n");
+				// printf("ERROR: Memory read overflow!\n");
 				*success = false;
 				return 0;
 			}
-			return hw_mem_read(value1, 4);
+			return hw_mem_read(value2, 4);
 		default:
-			printf("Syntax ERROR: Invalid oprand!\n");
+			// printf("Syntax ERROR: Invalid oprand!\n");
 			*success = false;
 			return 0;
 		}
 	}
-	printf("Interval eval ERROR: func should not reach here!\n");
+	// printf("Interval eval ERROR: func should not reach here!\n");
 	*success = false;
 	assert(0);
 	return 0;
@@ -762,5 +785,12 @@ uint32_t expr(char *e, bool *success)
 		return 0;
 	}
 
-	return eval_tokens(0, nr_token - 1, success);
+	uint32_t result = eval_tokens(0, nr_token - 1, success);
+
+	for (int i = 0; i<MAX_TOKEN_NUM;i++)
+	{
+		tokens[i].type = 0;
+		memset(tokens[i].str, 0, MAX_TOKEN_STR_LEN);
+	}
+	return result;
 }
