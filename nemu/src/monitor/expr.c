@@ -17,6 +17,8 @@
 
 extern CPU_STATE cpu;
 
+extern uint32_t look_up_symtab(char *sym, bool *success);
+
 enum
 {
 	NOTYPE = 256,
@@ -181,7 +183,7 @@ static bool make_token(char *e)
 					if (nr_token == 0 || tokens[nr_token - 1].type == '(')
 					{
 						tokens[nr_token].type = NUM;
-						strncpy(tokens[nr_token].str, "0", 1);
+						strcpy(tokens[nr_token].str, "0");
 						nr_token++;
 					}
 					tokens[nr_token].type = rules[i].token_type;
