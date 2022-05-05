@@ -184,6 +184,10 @@ static bool check_pair_parentheses(uint32_t start, uint32_t end, bool *success)
 
 inline static uint32_t skip_parentheses(uint32_t start, uint32_t end, bool *success)
 {
+	if (*success == false)
+	{
+		return 0;
+	}
 	if (tokens[start].type != '(')
 	{
 		printf("Internal Eval ERROR!\n");
@@ -210,6 +214,10 @@ inline static uint32_t skip_parentheses(uint32_t start, uint32_t end, bool *succ
 
 static uint32_t find_specific_last_op(uint32_t start, uint32_t end, char *op, bool *success, bool *found)
 {
+	if (*success == false)
+	{
+		return 0;
+	}
 	uint32_t result = start;
 	for (int i = start; i <= end; i++)
 	{
