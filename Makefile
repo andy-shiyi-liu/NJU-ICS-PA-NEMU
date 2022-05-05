@@ -207,6 +207,7 @@ test_batch-2-2-mute:
 	./nemu/nemu --autorun --testcase struct --kernel
 	./nemu/nemu --autorun --testcase string --kernel
 	./nemu/nemu --autorun --testcase hello-str  --kernel
+	./nemu/nemu --autorun --testcase test-cache --kernel
 	./nemu/nemu --autorun --testcase test-float --kernel
 
 test_batch-3-3-mute:
