@@ -78,3 +78,6 @@ build/
 
 # personal test files
 test/
+
+# sync config files
+sync.ffs_db

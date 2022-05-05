@@ -1,8 +1,8 @@
 #include "memory/mmu/cache.h"
-#ifndef __STDLIB_H_
+#ifndef _STDLIB_H
 #include <stdlib.h>
 #endif
-#ifndef __STDIO_H_
+#ifndef _STDIO_H
 #include <stdio.h>
 #endif
 
@@ -161,30 +161,30 @@ void cache_write(paddr_t paddr, size_t len, uint32_t data)
 		}
 		// write through, write mem data for all time.
 		hw_mem_write(paddr, len, data);
-		uint32_t memData = hw_mem_read(paddr, len);
-		assert(memData == data);
+		// uint32_t memData = hw_mem_read(paddr, len);
+		// assert(memData == data);
 	}
 	else // case 2: cross-line memory access
 	{
 		int32_t inBlockLen = (1 << CACHE_UNIT_SIZE_INDEX) - inBlockAddr;
 		int32_t nextBlockLen = len - inBlockLen;
 
-		assert(inBlockLen > 0 && inBlockLen < len);
-		assert(nextBlockLen > 0);
+		//assert(inBlockLen > 0 && inBlockLen < len);
+		//assert(nextBlockLen > 0);
 
 		uint32_t inBlockData = (data & (0xffffffff >> (32 - 8 * inBlockLen)));
 		uint32_t nextBlockData = (data & (0xffffffff << (8*inBlockLen))) >>(8*inBlockLen); 
 
 		// little endian
 		cache_write(paddr, inBlockLen, inBlockData);
-		uint32_t mask = 0xffffffff;
-		mask = mask >> (32 - (inBlockLen * 8));
-		uint32_t memData = hw_mem_read(paddr, len) & mask;
-		uint32_t maskedData = data & mask;
-		assert(memData == maskedData);
+		// uint32_t mask = 0xffffffff;
+		// mask = mask >> (32 - (inBlockLen * 8));
+		// uint32_t memData = hw_mem_read(paddr, len) & mask;
+		// uint32_t maskedData = data & mask;
+		// assert(memData == maskedData);
 		cache_write(paddr + inBlockLen, nextBlockLen, nextBlockData);
-		memData = hw_mem_read(paddr, len);
-		assert(memData == data);
+		// memData = hw_mem_read(paddr, len);
+		// assert(memData == data);
 	}
 }
 
@@ -215,7 +215,7 @@ uint32_t cache_read(paddr_t paddr, size_t len)
 	{
 		result = read_cache_data(lineNum, inBlockAddr, len);
 
-		assert(result == hw_mem_read(paddr, len));
+		// assert(result == hw_mem_read(paddr, len));
 		return result;
 	}
 	else // case 2: cross-line memory access
@@ -223,15 +223,15 @@ uint32_t cache_read(paddr_t paddr, size_t len)
 		int32_t inBlockDataLen = (1 << CACHE_UNIT_SIZE_INDEX) - inBlockAddr;
 		int32_t nextBlockDataLen = len - inBlockDataLen;
 
-		assert(inBlockDataLen > 0 && inBlockDataLen < len);
-		assert(nextBlockDataLen > 0);
+		//assert(inBlockDataLen > 0 && inBlockDataLen < len);
+		//assert(nextBlockDataLen > 0);
 
 		// little endian
 		result = cache_read(paddr + inBlockDataLen, nextBlockDataLen); // higher bits
 		result = result << 8 * inBlockDataLen;						   // 8: byte to bit
 		result += cache_read(paddr, inBlockDataLen);				   // lower bit
 
-		assert(result == hw_mem_read(paddr, len));
+		// assert(result == hw_mem_read(paddr, len));
 		return result;
 	}
 	// should not reach here

@@ -25,5 +25,5 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 
 ADD_EXECUTABLE(nemu ${NEMU})
-set_target_properties(nemu PROPERTIES COMPILE_FLAGS "-ggdb3 -MMD -MP -Wall -Wno-error -m32 -O1" LINK_FLAGS "-m32")
+set_target_properties(nemu PROPERTIES COMPILE_FLAGS "-ggdb3 -MMD -MP -Wall -Wno-error -m32 -O1 -g" LINK_FLAGS "-m32")
 target_link_libraries(nemu PRIVATE readline SDL ${PROJECT_SOURCE_DIR}/libs/nemu-ref/lib-nemu-ref.a)

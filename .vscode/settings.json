@@ -3,8 +3,8 @@
         "args": [
             "--kernel",
             "--testcase",
-            "mov-cmp",
-            "--autorun"
+            "test-cache",
+            // "--autorun"
         ],
         "cwd": "/home/ubuntu/work/ICS_PA/"
     },
@@ -19,6 +19,8 @@
         "cache.h": "c",
         "nemu.h": "c",
         "breakpoint.h": "c",
-        "memory.h": "c"
+        "memory.h": "c",
+        "stdlib.h": "c",
+        "regex.h": "c"
     }
 }
