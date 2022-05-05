@@ -3,6 +3,8 @@
 #include "memory/memory.h"
 
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
@@ -10,7 +12,7 @@
 #include <sys/types.h>
 #include <regex.h>
 
-#define MAX_TOKEN_STR_LEN 32
+#define MAX_TOKEN_STR_LEN 11
 #define MAX_TOKEN_NUM 32
 
 enum
@@ -19,10 +21,21 @@ enum
 	EQ,
 	NUM,
 	REG,
-	SYMB
-
-	/* TODO: Add more token types */
-
+	SYMB,
+	NEQ,
+	LEQ,
+	GEQ,
+	AND,
+	OR,
+	SHL,
+	SHR,
+	NUM8_1,
+	NUM8_2,
+	NUM16_1,
+	NUM16_2,
+	NUM2_1,
+	NUM2_2,
+	DREF,
 };
 
 static struct rule
@@ -36,12 +49,35 @@ static struct rule
 	 */
 
 	{" +", NOTYPE}, // white space
-	{"[0-9]{1,10}", NUM},
 	{"\\+", '+'},
 	{"-", '-'},
 	{"\\*", '*'},
 	{"\\(", '('},
 	{"\\)", ')'},
+	{"==", EQ},
+	{"!=", NEQ},
+	{"<=", LEQ},
+	{">=", GEQ},
+	{"&&", AND},
+	{"\\|\\|", OR},
+	{"<<", SHL},
+	{">>", SHR},
+	{"&", '&'},
+	{"\\|", '|'},
+	{"\\^", '^'},
+	{"!", '!'},
+	{"~", '~'},
+	{"<", '<'},
+	{">", '>'},
+	{"%", '%'},
+	{"0[Xx][0-9a-fA-F]+", NUM16_1},
+	{"[0-9a-fA-F]+[Hh]", NUM16_2},
+	{"0[Oo][0-9a-fA-F]+", NUM8_1},
+	{"[0-9a-fA-F]+[Oo]", NUM8_2},
+	{"0[Bb][0-9a-fA-F]+", NUM2_1},
+	{"[0-9a-fA-F]+[Bb]", NUM2_2},
+	{"[0-9]+", NUM},
+	{"[a-zA-Z_]*", SYMB},
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
@@ -113,12 +149,13 @@ static bool make_token(char *e)
 					return 0;
 				}
 
-				strncpy(tokens[nr_token].str, substr_start, substr_len);
-
 				switch (rules[i].token_type)
 				{
+				case NOTYPE:
+					break;
 				default:
 					tokens[nr_token].type = rules[i].token_type;
+					strncpy(tokens[nr_token].str, substr_start, substr_len);
 					nr_token++;
 				}
 
@@ -212,7 +249,7 @@ inline static uint32_t skip_parentheses(uint32_t start, uint32_t end, bool *succ
 	return i;
 }
 
-static uint32_t find_specific_last_op(uint32_t start, uint32_t end, char *op, bool *success, bool *found)
+static uint32_t find_specific_last_op(uint32_t start, uint32_t end, uint32_t op, bool *success, bool *found)
 {
 	if (*success == false)
 	{
@@ -225,7 +262,7 @@ static uint32_t find_specific_last_op(uint32_t start, uint32_t end, char *op, bo
 		{
 			i = skip_parentheses(i, end, success);
 		}
-		if (strcmp(tokens[i].str, op) == 0)
+		if (tokens[i].type == op)
 		{
 			result = i;
 			*found = true;
@@ -255,26 +292,109 @@ static uint32_t find_dom_op(uint32_t start, uint32_t end, bool *success)
 	uint32_t result = start;
 	bool found = false;
 
-	// level 1
-	result = max(find_specific_last_op(start, end, "+", success, &found), find_specific_last_op(start, end, "-", success, &found));
+	// level 1: ||
+	result = find_specific_last_op(start, end, OR, success, &found);
 	if (found == true)
 	{
 		printf("Dom_op level 1: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
-	// level 2
-	result = max(result, find_specific_last_op(start, end, "*", success, &found));
-	result = max(result, find_specific_last_op(start, end, "/", success, &found));
+	// level 2: &&
+	result = find_specific_last_op(start, end, AND, success, &found);
 	if (found == true)
 	{
 		printf("Dom_op level 2: index: %d, oprand: %c\n", result, tokens[result].type);
 		return result;
 	}
 
+	// level 3: |
+	result = find_specific_last_op(start, end, '|', success, &found);
+	if (found == true)
+	{
+		printf("Dom_op level 3: index: %d, oprand: %c\n", result, tokens[result].type);
+		return result;
+	}
+
+	// level 4: ^
+	result = find_specific_last_op(start, end, '^', success, &found);
+	if (found == true)
+	{
+		printf("Dom_op level 4: index: %d, oprand: %c\n", result, tokens[result].type);
+		return result;
+	}
+
+	// level 5: &
+	result = find_specific_last_op(start, end, '&', success, &found);
+	if (found == true)
+	{
+		printf("Dom_op level 5: index: %d, oprand: %c\n", result, tokens[result].type);
+		return result;
+	}
+
+	// level 6: == !=
+	result = max(find_specific_last_op(start, end, EQ, success, &found), find_specific_last_op(start, end, NEQ, success, &found));
+	if (found == true)
+	{
+		printf("Dom_op level 6: index: %d, oprand: %c\n", result, tokens[result].type);
+		return result;
+	}
+
+	// level 7: < <= > >=
+	result = max(find_specific_last_op(start, end, LEQ, success, &found), find_specific_last_op(start, end, '<', success, &found));
+	result = max(result, find_specific_last_op(start, end, GEQ, success, &found));
+	result = max(result, find_specific_last_op(start, end, '>', success, &found));
+	if (found == true)
+	{
+		printf("Dom_op level 7: index: %d, oprand: %c\n", result, tokens[result].type);
+		return result;
+	}
+
+	// level 8: << >>
+	result = max(find_specific_last_op(start, end, SHL, success, &found), find_specific_last_op(start, end, SHR, success, &found));
+	if (found == true)
+	{
+		printf("Dom_op level 8: index: %d, oprand: %c\n", result, tokens[result].type);
+		return result;
+	}
+
+	// level 9: + -
+	result = max(find_specific_last_op(start, end, '+', success, &found), find_specific_last_op(start, end, '-', success, &found));
+	if (found == true)
+	{
+		printf("Dom_op level 9: index: %d, oprand: %c\n", result, tokens[result].type);
+		return result;
+	}
+
+	// level 10: * / %
+	result = max(find_specific_last_op(start, end, '*', success, &found), find_specific_last_op(start, end, '/', success, &found));
+	result = max(result, find_specific_last_op(start, end, '%', success, &found));
+	if (found == true)
+	{
+		printf("Dom_op level 10: index: %d, oprand: %c\n", result, tokens[result].type);
+		return result;
+	}
+
+	// level 11: ~ ! *(DREF)
+	result = max(find_specific_last_op(start, end, '~', success, &found), find_specific_last_op(start, end, '!', success, &found));
+	result = max(result, find_specific_last_op(start, end, DREF, success, &found));
+	if (found == true)
+	{
+		printf("Dom_op level 11: index: %d, oprand: %c\n", result, tokens[result].type);
+		return result;
+	}
+
 	printf("ERROR: no valid oprand found!\n");
 	*success = false;
 	return 0;
+}
+
+static void strupr(char str[])
+{
+	for (int i = 0; i < strlen(str); i++)
+	{
+		str[i] = toupper(str[i]);
+	}
 }
 
 static uint32_t eval_tokens(uint32_t start, uint32_t end, bool *success)
@@ -300,13 +420,51 @@ static uint32_t eval_tokens(uint32_t start, uint32_t end, bool *success)
 		 * For now this token should be a number.
 		 * Return the value of the number.
 		 */
-		if (tokens[start].type != NUM)
+		char temp_str[MAX_TOKEN_STR_LEN];
+		char *temp; // for passing into strtol()
+		if (tokens[start].type == NUM)
+		{
+			return atoi(tokens[start].str);
+		}
+		else if (tokens[start].type == NUM16_1)
+		{
+			strupr(tokens[start].str);
+			return strtol(&tokens[start].str[2], &temp, 16);
+		}
+		else if (tokens[start].type == NUM16_2)
+		{
+			strupr(tokens[start].str);
+			temp_str[strlen(temp_str) - 1] = 0;
+			return strtol(tokens[start].str, &temp, 16);
+		}
+		else if (tokens[start].type == NUM8_1)
+		{
+			strupr(tokens[start].str);
+			return strtol(&tokens[start].str[2], &temp, 8);
+		}
+		else if (tokens[start].type == NUM8_2)
+		{
+			strupr(tokens[start].str);
+			temp_str[strlen(temp_str) - 1] = 0;
+			return strtol(tokens[start].str, &temp, 8);
+		}
+		else if (tokens[start].type == NUM2_1)
+		{
+			strupr(tokens[start].str);
+			return strtol(&tokens[start].str[2], &temp, 2);
+		}
+		else if (tokens[start].type == NUM2_2)
+		{
+			strupr(tokens[start].str);
+			temp_str[strlen(temp_str) - 1] = 0;
+			return strtol(tokens[start].str, &temp, 2);
+		}
+		else
 		{
 			printf("Syntax ERROR: wrong single token type!\n");
 			*success = false;
 			return 0;
 		}
-		return atoi(tokens[start].str);
 	}
 	else if (check_pair_parentheses(start, end, success) == true)
 	{
@@ -324,7 +482,7 @@ static uint32_t eval_tokens(uint32_t start, uint32_t end, bool *success)
 		}
 
 		uint32_t dom_op_index = find_dom_op(start, end, success);
-		uint32_t value1 = eval_tokens(start, dom_op_index - 1, success);
+		uint32_t value1 = 0;
 		uint32_t value2 = eval_tokens(dom_op_index + 1, end, success);
 
 		if (*success == false)
@@ -335,13 +493,63 @@ static uint32_t eval_tokens(uint32_t start, uint32_t end, bool *success)
 		switch (tokens[dom_op_index].type)
 		{
 		case '+':
+			value1 = eval_tokens(start, dom_op_index - 1, success);
 			return value1 + value2;
 		case '-':
+			value1 = eval_tokens(start, dom_op_index - 1, success);
 			return value1 - value2;
 		case '*':
+			value1 = eval_tokens(start, dom_op_index - 1, success);
 			return value1 * value2;
 		case '/':
+			value1 = eval_tokens(start, dom_op_index - 1, success);
 			return value1 / value2;
+		case EQ:
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 == value2;
+		case NEQ:
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 != value2;
+		case LEQ:
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 <= value2;
+		case GEQ:
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 >= value2;
+		case AND:
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 && value2;
+		case OR:
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 || value2;
+		case SHL:
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 << value2;
+		case SHR:
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 >> value2;
+		case '&':
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 & value2;
+		case '|':
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 | value2;
+		case '^':
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 ^ value2;
+		case '!':
+			return !value2;
+		case '~':
+			return ~value2;
+		case '>':
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 > value2;
+		case '<':
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 < value2;
+		case '%':
+			value1 = eval_tokens(start, dom_op_index - 1, success);
+			return value1 % value2;
 		default:
 			printf("Syntax ERROR: Invalid oprand!\n");
 			*success = false;
