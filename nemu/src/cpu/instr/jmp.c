@@ -58,3 +58,10 @@ make_instr_func(jmp_short)
 }
 
 
+make_instr_func(jmp_far_imm)
+{
+        opr_src.type = OPR_IMM; 
+	opr_src.sreg = SREG_CS; 
+	opr_src.addr = eip + 1; 
+	len += opr_src.data_size / 8;
+}
