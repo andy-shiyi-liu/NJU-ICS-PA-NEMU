@@ -21,6 +21,7 @@
         "breakpoint.h": "c",
         "memory.h": "c",
         "stdlib.h": "c",
-        "regex.h": "c"
+        "regex.h": "c",
+        "sdl.h": "c"
     }
 }

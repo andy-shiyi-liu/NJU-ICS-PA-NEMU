@@ -20,6 +20,54 @@ make_instr_impl_2op(mov, a, o, v)
 make_instr_impl_2op(mov, o, a, b)
 make_instr_impl_2op(mov, o, a, v)
 
+// for mov gdt selector to segreg
+make_instr_func(mov_rm2s_w)
+{
+        int len = 1;
+        decode_data_size_w;
+        decode_operand_rm2r;
+        print_asm_2("mov", opr_dest.data_size == 8 ? "b" : (opr_dest.data_size == 16 ? "w" : "l"), len, &opr_src, &opr_dest);
+
+        opr_dest.type = OPR_SREG;
+        operand_read(&opr_src);
+        opr_dest.val = opr_src.val;
+        operand_write(&opr_dest);
+
+        return len;
+}
+
+// self write
+make_instr_func(mov_r2c_l)
+{
+        int len = 1;
+        decode_data_size_l;
+        decode_operand_r2rm;
+        print_asm_2("mov", opr_dest.data_size == 8 ? "b" : (opr_dest.data_size == 16 ? "w" : "l"), len, &opr_src, &opr_dest);
+
+        opr_dest.type = OPR_CREG;
+        operand_read(&opr_src);
+        opr_dest.val = opr_src.val;
+        operand_write(&opr_dest);
+
+        return 2;
+}
+
+make_instr_func(mov_c2r_l)
+{
+        int len = 1;
+        decode_data_size_l;
+        decode_operand_rm2r;
+        print_asm_2("mov", opr_dest.data_size == 8 ? "b" : (opr_dest.data_size == 16 ? "w" : "l"), len, &opr_src, &opr_dest);
+
+        opr_src.type = OPR_CREG;
+        operand_read(&opr_src);
+        opr_dest.val = opr_src.val;
+        operand_write(&opr_dest);
+
+        return 2;
+}
+
+
 make_instr_func(mov_zrm82r_v) {
 	int len = 1;
 	OPERAND r, rm;

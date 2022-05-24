@@ -132,7 +132,7 @@ int parse_rm_32(uint32_t eip, MODRM modrm, OPERAND *opr)
 	return len;
 }
 
-int modrm_r_rm(uint32_t eip, OPERAND *r, OPERAND *rm)
+int modrm_r_rm(uint32_t eip, OPERAND *r, OPERAND *rm)  //
 {
 	MODRM modrm;
 	modrm.val = instr_fetch(eip, 1);
