@@ -65,34 +65,39 @@ void exec(uint32_t n)
 	{
 		if(!is_nemu_hlt)
 		{
-			/*
-			printf("cpu.eax: %x\n", cpu.eax);
-			printf("cpu.ebx: %x\n", cpu.ebx);
-			printf("cpu.ebp: %x\n", cpu.ebp);
-			printf("cpu.ecx: %x\n", cpu.ecx);
-			printf("cpu.edi: %x\n", cpu.edi);
-			printf("cpu.edx: %x\n", cpu.edx);
-			printf("cpu.esi: %x\n", cpu.esi);
-			printf("cpu.eflags.AF: %x\n", cpu.eflags.AF);
-			printf("cpu.eflags.CF: %x\n", cpu.eflags.CF);
-			printf("cpu.eflags.IF: %x\n", cpu.eflags.IF);
-			printf("cpu.eflags.NT: %x\n", cpu.eflags.NT);
-			printf("cpu.eflags.OF: %x\n", cpu.eflags.OF);
-			printf("cpu.eflags.OLIP: %x\n", cpu.eflags.OLIP);
-			printf("cpu.eflags.PF: %x\n", cpu.eflags.PF);
-			printf("cpu.eflags.RF: %x\n", cpu.eflags.RF);
-			printf("cpu.eflags.SF: %x\n", cpu.eflags.SF);
-			printf("cpu.eflags.TF: %x\n", cpu.eflags.TF);
-			printf("cpu.eflags.VM: %x\n", cpu.eflags.VM);
-			printf("cpu.eflags.ZF: %x\n", cpu.eflags.ZF);
-			printf("\n*************************************\n\n");
-			printf("cpu.eip: %x\n", cpu.eip);
-			printf("cpu.esp: %x\n", cpu.esp);
-			*/
-
 			instr_len = exec_inst();
 			cpu.eip += instr_len;
 			n--;
+
+			// printf("cpu.esp: %x\n", cpu.esp);
+			// printf("cpu.eax: %x\n", cpu.eax);
+			// printf("cpu.ebx: %x\n", cpu.ebx);
+			// printf("cpu.ebp: %x\n", cpu.ebp);
+			// printf("cpu.ecx: %x\n", cpu.ecx);
+			// printf("cpu.edi: %x\n", cpu.edi);
+			// printf("cpu.edx: %x\n", cpu.edx);
+			// printf("cpu.esi: %x\n", cpu.esi);
+			// printf("cpu.eflags.AF: %x\n", cpu.eflags.AF);
+			// printf("cpu.eflags.CF: %x\n", cpu.eflags.CF);
+			// printf("cpu.eflags.IF: %x\n", cpu.eflags.IF);
+			// printf("cpu.eflags.NT: %x\n", cpu.eflags.NT);
+			// printf("cpu.eflags.OF: %x\n", cpu.eflags.OF);
+			// printf("cpu.eflags.OLIP: %x\n", cpu.eflags.OLIP);
+			// printf("cpu.eflags.PF: %x\n", cpu.eflags.PF);
+			// printf("cpu.eflags.RF: %x\n", cpu.eflags.RF);
+			// printf("cpu.eflags.SF: %x\n", cpu.eflags.SF);
+			// printf("cpu.eflags.TF: %x\n", cpu.eflags.TF);
+			// printf("cpu.eflags.VM: %x\n", cpu.eflags.VM);
+			// printf("cpu.eflags.ZF: %x\n", cpu.eflags.ZF);
+			// printf("cpu.cr0.val: %x\n", cpu.cr0.val);
+			// printf("cpu.es: %x\n", cpu.es.val);
+			// printf("cpu.cs: %x\n", cpu.cs.val);
+			// printf("cpu.ss: %x\n", cpu.ss.val);
+			// printf("cpu.ds: %x\n", cpu.ds.val);
+			// printf("cpu.fs: %x\n", cpu.fs.val);
+			// printf("cpu.gs: %x\n", cpu.gs.val);
+			// printf("\n*************************************\n\n");
+			// printf("cpu.eip: %x\n", cpu.eip);
 
 			if (hit_break_rerun)
 			{

@@ -11,6 +11,7 @@ make_instr_func(call_near)
     opr_src.type = OPR_IMM;
     opr_src.data_size = 32;
     opr_src.addr = cpu.eip+1;
+    opr_src.sreg = SREG_CS;
     operand_read(&opr_src);
     //printf("opr_src.val: %x\n", opr_src.val);
     

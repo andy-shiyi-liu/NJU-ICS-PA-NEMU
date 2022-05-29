@@ -23,7 +23,7 @@ uint32_t paddr_read(paddr_t paddr, size_t len)
 {
 	uint32_t ret = 0;
 #ifdef CACHE_ENABLED
-	ret = cache_read(paddr,len);
+	ret = cache_read(paddr, len);
 #else
 	ret = hw_mem_read(paddr, len);
 #endif
@@ -32,11 +32,11 @@ uint32_t paddr_read(paddr_t paddr, size_t len)
 
 void paddr_write(paddr_t paddr, size_t len, uint32_t data)
 {
-	#ifdef CACHE_ENABLED
+#ifdef CACHE_ENABLED
 	cache_write(paddr, len, data);
-	#else
+#else
 	hw_mem_write(paddr, len, data);
-	#endif
+#endif
 }
 
 uint32_t laddr_read(laddr_t laddr, size_t len)
@@ -52,13 +52,31 @@ void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 uint32_t vaddr_read(vaddr_t vaddr, uint8_t sreg, size_t len)
 {
 	assert(len == 1 || len == 2 || len == 4);
+#ifndef IA32_SEG
 	return laddr_read(vaddr, len);
+#else
+	uint32_t laddr = vaddr;
+	if (cpu.cr0.pe == 1)
+	{
+		laddr = segment_translate(vaddr, sreg);
+	}
+	return laddr_read(laddr, len);
+#endif
 }
 
 void vaddr_write(vaddr_t vaddr, uint8_t sreg, size_t len, uint32_t data)
 {
 	assert(len == 1 || len == 2 || len == 4);
+#ifndef IA32_SEG
 	laddr_write(vaddr, len, data);
+#else
+	uint32_t laddr = vaddr;
+	if (cpu.cr0.pe == 1)
+	{
+		laddr = segment_translate(vaddr, sreg);
+	}
+	laddr_write(laddr, len, data);
+#endif
 }
 
 void init_mem()

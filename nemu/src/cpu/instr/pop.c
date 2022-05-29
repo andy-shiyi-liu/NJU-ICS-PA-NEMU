@@ -12,6 +12,7 @@ static void instr_execute_1op()
     cpu.esp += opr_src.data_size / 8;
     
     opr_src.val = opr_dest.val;
+    opr_src.sreg = SREG_SS;
     
     operand_write(&opr_src);
 }

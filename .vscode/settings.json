@@ -4,7 +4,7 @@
             "--kernel",
             "--testcase",
             "test-cache",
-            // "--autorun"
+            "--autorun"
         ],
         "cwd": "/home/ubuntu/work/ICS_PA/"
     },
@@ -21,6 +21,7 @@
         "breakpoint.h": "c",
         "memory.h": "c",
         "stdlib.h": "c",
-        "regex.h": "c"
+        "regex.h": "c",
+        "sdl.h": "c"
     }
 }
