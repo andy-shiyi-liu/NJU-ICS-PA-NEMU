@@ -20,7 +20,8 @@ make_instr_func(jmp_near_indirect)
         int len = 1;
 
         decode_operand_rm
-            operand_read(&opr_src);
+        opr_src.sreg = SREG_CS;
+        operand_read(&opr_src);
         if (data_size == 16)
         {
                 cpu.eip = opr_src.val & 0x0000ffff;
@@ -66,6 +67,8 @@ make_instr_func(jmp_far_imm)
 
         cpu.cs.val = csOp.val;
         cpu.eip = eipOp.val;
+
+        load_sreg(1);
 
         return 0;
 }
