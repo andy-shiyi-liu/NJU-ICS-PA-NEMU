@@ -1,0 +1,10 @@
+{
+  "makefile.extensionOutputFolder": "./.vscode",
+  "makefile.launchConfigurations": [
+    {
+      "cwd": "/home/ubuntu/work/ICS_PA/kernel",
+      "binaryPath": "/home/ubuntu/work/ICS_PA/kernel/kernel",
+      "binaryArgs": []
+    }
+  ]
+}
