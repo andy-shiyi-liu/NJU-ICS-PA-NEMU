@@ -2,7 +2,7 @@
 #include "memory.h"
 #include <string.h>
 
-PDE updir[NR_PDE] align_to_page;
+PDE updir[NR_PDE] align_to_page; // user page dir
 CR3 ucr3;
 
 PDE *get_updir() { return updir; }
@@ -24,7 +24,7 @@ void mm_brk(uint32_t new_brk)
 
 void init_mm()
 {
-	PDE *kpdir = get_kpdir();
+	PDE *kpdir = get_kpdir(); // kernel page dir
 
 	/* make all PDE invalid */
 	memset(updir, 0, NR_PDE * sizeof(PDE));

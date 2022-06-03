@@ -9,8 +9,8 @@ CC = gcc
 # forbid endbr32
 CFLAGS = -m32 -MMD -Wall -Werror -march=i386 -fno-builtin -fno-omit-frame-pointer -fno-stack-protector -fcf-protection=branch -mmanual-endbr -I./include -I../include -I$(NEWLIBC_DIR)/include
 ASFLAGS = -m32 -MMD -I./include -I../include
-LDFLAGS = -Ttext=0x30000 -m elf_i386 # before page
-#LDFLAGS = -Ttext=0xc0030000 -m elf_i386 
+# LDFLAGS = -Ttext=0x30000 -m elf_i386 # before page
+LDFLAGS = -Ttext=0xc0030000 -m elf_i386 # enable paging 
 
 CSRC = $(shell find ./src -name "*.c")
 SSRC = $(shell find ./src -name "*.S")

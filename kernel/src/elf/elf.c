@@ -16,12 +16,13 @@ uint32_t get_ucr3();
 
 uint32_t loader()
 {
+	// BREAK_POINT
 	Elf32_Ehdr *elf;
 	Elf32_Phdr *ph, *eph;
 
 	uint32_t addr_shift = 0;
-	char data;
-	char *pdata;
+	uint8_t data;
+	uint8_t *pdata;
 
 #ifdef HAS_DEVICE_IDE
 	uint8_t buf[4096];
@@ -43,24 +44,40 @@ uint32_t loader()
 
 			// remove this panic!!!
 			// panic("Please implement the loader");
-
-/* TODO: copy the segment from the ELF file to its proper memory area */
-			for(addr_shift = 0; addr_shift < ph->p_filesz; addr_shift++)
+#ifdef IA32_PAGE
+			uint32_t paddrBase = mm_malloc(ph->p_vaddr, ph->p_memsz);
+			for (addr_shift = 0; addr_shift < ph->p_filesz; addr_shift++)
 			{
 				// vaddr_write(ph->p_vaddr+addr_shift, 0, 1, vaddr_read(ph->p_offset+addr_shift, 0, 1));
-				pdata = (void*)ph->p_offset+addr_shift;
+				pdata = (void *)ph->p_offset + addr_shift;
 				data = *pdata;
-				pdata = (void*)ph->p_vaddr+addr_shift;
+				pdata = (void *)paddrBase + addr_shift;
 				*pdata = data;
 			}
-/* TODO: zeror the memory area [vaddr + file_sz, vaddr + mem_sz) */
-			for(addr_shift = ph->p_filesz; addr_shift < ph->p_memsz; addr_shift++)
+			for (addr_shift = ph->p_filesz; addr_shift < ph->p_memsz; addr_shift++)
 			{
 				// vaddr_write(ph->p_vaddr+addr_shift, 0, 1, 0);
-				pdata = (void*)ph->p_vaddr+addr_shift;
+				pdata = (void *)paddrBase + addr_shift;
 				*pdata = 0;
 			}
-
+#else
+			/* TODO: copy the segment from the ELF file to its proper memory area */
+			for (addr_shift = 0; addr_shift < ph->p_filesz; addr_shift++)
+			{
+				// vaddr_write(ph->p_vaddr+addr_shift, 0, 1, vaddr_read(ph->p_offset+addr_shift, 0, 1));
+				pdata = (void *)ph->p_offset + addr_shift;
+				data = *pdata;
+				pdata = (void *)ph->p_vaddr + addr_shift;
+				*pdata = data;
+			}
+			/* TODO: zeror the memory area [vaddr + file_sz, vaddr + mem_sz) */
+			for (addr_shift = ph->p_filesz; addr_shift < ph->p_memsz; addr_shift++)
+			{
+				// vaddr_write(ph->p_vaddr+addr_shift, 0, 1, 0);
+				pdata = (void *)ph->p_vaddr + addr_shift;
+				*pdata = 0;
+			}
+#endif
 #ifdef IA32_PAGE
 			/* Record the program break for future use */
 			extern uint32_t brk;

@@ -22,10 +22,11 @@ void init_cond();
 void init()
 {
 #ifdef IA32_PAGE
-	/* We must set up kernel virtual memory first because our kernel thinks it 
+	/* We must set up kernel virtual memory first because our kernel thinks it
 	 * is located at 0xc0030000, which is set by the linking options in Makefile.
 	 * Before setting up correct paging, no global variable can be used. */
 	init_page();
+	// BREAK_POINT
 
 	/* After paging is enabled, transform %esp to virtual address. */
 	asm volatile("addl %0, %%esp"
@@ -88,7 +89,7 @@ void init_cond()
 	/* Load the program. */
 	uint32_t eip = loader();
 #ifdef HAS_DEVICE_VGA
-	/* Read data in the video memory to check whether 
+	/* Read data in the video memory to check whether
 	 * the test data is written sucessfully.
 	 */
 	video_mapping_read_test();
@@ -105,7 +106,7 @@ void init_cond()
 				 : "i"(KOFFSET));
 #endif
 
-	//asm volatile(".byte 0x82" : : "a"(2));
+	// asm volatile(".byte 0x82" : : "a"(2));
 	/* Here we go! */
 	((void (*)(void))eip)();
 }
