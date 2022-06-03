@@ -11,6 +11,7 @@ PDE *get_kpdir() { return kpdir; }
 /* set up page tables for kernel */
 void init_page(void)
 {
+	BREAK_POINT
 	CR0 cr0;
 	CR3 cr3;
 	PDE *pdir = (PDE *)va_to_pa(kpdir);
@@ -18,6 +19,7 @@ void init_page(void)
 	uint32_t pdir_idx, ptable_idx, pframe_idx;
 
 	/* make all PDE invalid */
+	BREAK_POINT
 	memset(pdir, 0, NR_PDE * sizeof(PDE));
 
 	/* fill PDEs and PTEs */
