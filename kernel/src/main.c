@@ -25,8 +25,8 @@ void init()
 	/* We must set up kernel virtual memory first because our kernel thinks it
 	 * is located at 0xc0030000, which is set by the linking options in Makefile.
 	 * Before setting up correct paging, no global variable can be used. */
+	BREAK_POINT
 	init_page();
-	// BREAK_POINT
 
 	/* After paging is enabled, transform %esp to virtual address. */
 	asm volatile("addl %0, %%esp"

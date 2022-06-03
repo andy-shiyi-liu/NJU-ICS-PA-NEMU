@@ -4,7 +4,7 @@
             "--kernel",
             "--testcase",
             "test-cache",
-            "--autorun"
+            // "--autorun"
         ],
         "cwd": "/home/ubuntu/work/ICS_PA/"
     },
@@ -22,6 +22,9 @@
         "memory.h": "c",
         "stdlib.h": "c",
         "regex.h": "c",
-        "sdl.h": "c"
+        "sdl.h": "c",
+        "stdio.h": "c",
+        "time.h": "c",
+        "config.h": "c"
     }
 }
