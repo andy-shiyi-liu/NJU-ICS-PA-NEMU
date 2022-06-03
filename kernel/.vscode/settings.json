@@ -6,5 +6,9 @@
       "binaryPath": "/home/ubuntu/work/ICS_PA/kernel/kernel",
       "binaryArgs": []
     }
-  ]
+  ],
+  "files.associations": {
+    "common.h": "c",
+    "config.h": "c"
+  }
 }

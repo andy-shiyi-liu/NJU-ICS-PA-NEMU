@@ -16,7 +16,7 @@ uint32_t get_ucr3();
 
 uint32_t loader()
 {
-	// BREAK_POINT
+	BREAK_POINT
 	Elf32_Ehdr *elf;
 	Elf32_Phdr *ph, *eph;
 
