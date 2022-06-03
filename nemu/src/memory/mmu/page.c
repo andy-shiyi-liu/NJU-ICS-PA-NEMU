@@ -25,13 +25,13 @@ paddr_t page_translate(laddr_t laddr)
 	uint32_t inPageAddr = get_inpage_addr(laddr);
 
 	uint32_t pdirBaseAddr = cpu.cr3.pdbr;
-	PDE *pdir = hw_mem + (pdirBaseAddr << 12);
+	PDE *pdir = (PDE*)(hw_mem + (pdirBaseAddr << 12));
 	assert(pdir->present == 1);
 	assert(pdir->read_write == 1);
 	assert(pdir->user_supervisor == 1);
 
 	uint32_t ptableBaseAddr = pdir[pdirIndex].page_frame;
-	PTE *ptable = hw_mem + (ptableBaseAddr << 12);
+	PTE *ptable = (PTE*)(hw_mem + (ptableBaseAddr << 12));
 	assert(ptable->present == 1);
 	assert(ptable->read_write == 1);
 	assert(ptable->user_supervisor == 1);
