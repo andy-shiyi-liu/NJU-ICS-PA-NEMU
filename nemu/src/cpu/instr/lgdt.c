@@ -10,7 +10,6 @@ make_instr_func(lgdt)
     decode_data_size_l;
     cpu.eip--;
     decode_operand_rm;
-    print_asm_1("lgdt", opr_src.data_size == 8 ? "b" : (opr_src.data_size == 16 ? "w" : "l"), len, &opr_src);
 
     // lower 16 bit: limit
     cpu.gdtr.limit = laddr_read(opr_src.addr, 2);
@@ -28,5 +27,6 @@ make_instr_func(lgdt)
         assert("lgdt: data size ERROR!");
     }
 
+    print_asm_1("lgdt", opr_src.data_size == 8 ? "b" : (opr_src.data_size == 16 ? "w" : "l"), len, &opr_src);
     return len;
 }

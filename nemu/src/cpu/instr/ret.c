@@ -15,6 +15,8 @@ make_instr_func(ret_near)
     
     //set %eip
     cpu.eip = opr_src.val;
+
+    print_asm_0("ret", "", 1);
     return 0;
 }
 
@@ -42,5 +44,6 @@ make_instr_func(ret_near_imm16)
     //set %esp
     cpu.esp += opr_src.val;
     
+    print_asm_1("ret", "", 4, &opr_src);
     return 0;
 }

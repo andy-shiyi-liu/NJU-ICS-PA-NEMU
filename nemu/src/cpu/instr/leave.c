@@ -14,6 +14,8 @@ make_instr_func(leave)
     cpu.esp += data_size / 8;
     
     cpu.ebp = opr_dest.val;
+
+    print_asm_0("lea", "", 1);
     return 1;
 }
 

@@ -26,6 +26,7 @@ kernel: $(ALL_OBJS) ../include/config.h Makefile
 	ld $(LDFLAGS) -e start -o kernel $(START_OBJ) $(OBJS) $(MM_MALLOC_OBJ) $(NEWLIBC)
 	objcopy --remove-section .note.gnu.property kernel
 	objcopy -S -O binary kernel kernel.img
+	objdump -d ./kernel > ./objdump_kernel.log
 
 -include $(ALL_OBJS:.o=.d)
 

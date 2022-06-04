@@ -41,6 +41,7 @@ make_instr_func(mov_rm2s_w)
 // self write
 make_instr_func(mov_r2c_l)
 {
+        printf("in mov_r2c_l, eip = %x\n", cpu.eip);
         int len = 1;
         decode_data_size_l;
         decode_operand_r2rm;
