@@ -7,7 +7,7 @@
 
 uint8_t hw_mem[MEM_SIZE_B];
 
-static inline mask_byte(uint32_t data, uint32_t byte)
+static inline uint32_t mask_byte(uint32_t data, uint32_t byte)
 {
 	switch (byte)
 	{

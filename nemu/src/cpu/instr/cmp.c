@@ -20,3 +20,4 @@ make_instr_impl_2op(cmp, rm, r, v) //3b
 make_instr_impl_2op(cmp, i, a, b) //3c
 make_instr_impl_2op(cmp, i, rm, b) //80 7d
 make_instr_impl_2op(cmp, rm, r, b) //3a
+make_instr_impl_2op(cmp, i, a, v) //3d
