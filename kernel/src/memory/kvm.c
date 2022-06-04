@@ -22,6 +22,9 @@ void init_page(void)
 
 	/* fill PDEs and PTEs */
 	pframe_idx = 0;
+	// PHY_MEM = 128 * 1024 * 1024
+	// PT_SIZE = (NR_PTE) * (PAGE_SIZE) = 1024 * 4096 = 4 * 1024 * 1024
+	// PHY_MEM / PT_SIZE = 128 / 4 = 32
 	for (pdir_idx = 0; pdir_idx < PHY_MEM / PT_SIZE; pdir_idx++)
 	{
 		pdir[pdir_idx].val = make_pde(ptable);
