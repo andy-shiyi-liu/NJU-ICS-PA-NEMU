@@ -27,6 +27,7 @@ make_instr_func(call_near)
     
     //set %eip
     cpu.eip += opr_src.val;
+    print_asm_1("call", "", 5, &opr_src);
     return 0;
 }
 
@@ -58,5 +59,6 @@ make_instr_func(call_near_indirect)
         cpu.eip &= 0x0000ffff;
     }
 
+    print_asm_1("call", "", 5, &opr_src);
     return 0;
 }

@@ -30,6 +30,7 @@ make_instr_func(jmp_near_indirect)
         {
                 cpu.eip = opr_src.val;
         }
+        print_asm_1("jmp", "", len, &opr_src);
         return 0;
 }
 
@@ -69,6 +70,8 @@ make_instr_func(jmp_far_imm)
         cpu.eip = eipOp.val;
 
         load_sreg(1);
+
+        print_asm_2("jmp", "", (data_size+16) / 8, &opr_src, &opr_dest);
 
         return 0;
 }

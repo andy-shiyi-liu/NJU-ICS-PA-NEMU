@@ -4,7 +4,7 @@
             "--kernel",
             "--testcase",
             "test-cache",
-            // "--autorun"
+            "--autorun"
         ],
         "cwd": "/home/ubuntu/work/ICS_PA/"
     },

@@ -11,7 +11,6 @@ PDE *get_kpdir() { return kpdir; }
 /* set up page tables for kernel */
 void init_page(void)
 {
-	BREAK_POINT
 	CR0 cr0;
 	CR3 cr3;
 	PDE *pdir = (PDE *)va_to_pa(kpdir);
@@ -19,7 +18,6 @@ void init_page(void)
 	uint32_t pdir_idx, ptable_idx, pframe_idx;
 
 	/* make all PDE invalid */
-	BREAK_POINT
 	memset(pdir, 0, NR_PDE * sizeof(PDE));
 
 	/* fill PDEs and PTEs */
@@ -39,6 +37,8 @@ void init_page(void)
 	/* make CR3 to be the entry of page directory */
 	cr3.val = 0;
 	cr3.page_directory_base = ((uint32_t)pdir) >> 12;
+	// Log("cr3 = %x\n", cr3);
+	// Log("cr3.page_directory_base = %x\n", cr3.page_directory_base);
 	write_cr3(cr3.val);
 
 	/* set PG bit in CR0 to enable paging */

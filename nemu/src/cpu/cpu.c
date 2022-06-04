@@ -96,7 +96,7 @@ void exec(uint32_t n)
 			// printf("cpu.ds: %x\n", cpu.ds.val);
 			// printf("cpu.fs: %x\n", cpu.fs.val);
 			// printf("cpu.gs: %x\n", cpu.gs.val);
-			// printf("\n*************************************\n\n");
+			// printf("*************************************\n");
 			// printf("cpu.eip: %x\n", cpu.eip);
 
 			if (hit_break_rerun)

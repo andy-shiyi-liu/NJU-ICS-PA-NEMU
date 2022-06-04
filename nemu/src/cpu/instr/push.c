@@ -44,5 +44,6 @@ make_instr_func(push_i_b)
     
     operand_write(&opr_dest);
 
+    print_asm_1("push", "b", 2, &opr_src);
     return 2;
 }
