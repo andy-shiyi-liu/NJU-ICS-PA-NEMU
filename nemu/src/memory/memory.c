@@ -7,6 +7,26 @@
 
 uint8_t hw_mem[MEM_SIZE_B];
 
+static inline mask_byte(uint32_t data, uint32_t byte)
+{
+	switch (byte)
+	{
+	case 1:
+		return data & 0xff;
+		break;
+	case 2:
+		return data & 0xffff;
+		break;
+	case 3:
+		return data & 0xffffff;
+		break;
+	default:
+		printf("data len ERROR!");
+		assert(0);
+		break;
+	}
+}
+
 uint32_t hw_mem_read(paddr_t paddr, size_t len)
 {
 	uint32_t ret = 0;
@@ -44,10 +64,32 @@ uint32_t laddr_read(laddr_t laddr, size_t len)
 	assert(len == 1 || len == 2 || len == 4);
 	if (cpu.cr0.pe == 1 && cpu.cr0.pg == 1)
 	{
-		if (laddr >> 12 != (laddr + len) >> 12)
+		if (laddr >> 12 != (laddr + len -1) >> 12)
 		{
-			printf("Cross-page Data Read!");
-			assert(0);
+			// printf("Cross-page Data Read!\n");
+			// printf("laddr: %x\n", laddr);
+			// printf("len: %x\n", len);
+			// printf("laddr + len: %x\n", laddr + len -1);
+
+			uint8_t nextPageLen = (laddr + len) & 0xfff;
+			uint8_t inPageLen = len - nextPageLen;
+			// printf("inPageLen: %x\n", inPageLen);
+			// printf("nextPageLen: %x\n", nextPageLen);
+
+			uint32_t inPagePaddr = page_translate(laddr);
+			uint32_t inPageData = paddr_read(inPagePaddr, len);
+			inPageData = mask_byte(inPageData, inPageLen);
+			
+			uint32_t nextPagePaddr = page_translate(laddr + inPageLen);
+			uint32_t nextPageData = paddr_read(nextPagePaddr, len);
+			nextPageData = mask_byte(nextPageData, nextPageLen);
+
+			// printf("inPageData: %x\n", inPageData);
+			// printf("nextPageData: %x\n", nextPageData);
+
+			uint32_t data = (nextPageData << (8 * inPageLen)) + inPageData;
+			// printf("data: %x\n", data);
+			return data;
 		}
 		else
 		{
@@ -65,9 +107,12 @@ void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 {
 	assert(len == 1 || len == 2 || len == 4);
 	if(cpu.cr0.pe == 1 && cpu.cr0.pg == 1){
-		if (laddr >> 12 != (laddr + len) >> 12)
+		if (laddr >> 12 != (laddr + len -1) >> 12)
 		{
-			printf("Cross-page Data Read!");
+			printf("Cross-page Data Write!\n");
+			printf("laddr: %x\n", laddr);
+			printf("len: %x\n", len);
+			printf("laddr + len: %x\n", laddr + len);
 			assert(0);
 		}
 		else
