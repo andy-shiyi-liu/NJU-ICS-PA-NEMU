@@ -3,8 +3,8 @@
         "args": [
             "--kernel",
             "--testcase",
-            "mov-c",
-            // "--autorun"
+            "test-page",
+            "--autorun"
         ],
         "cwd": "/home/ubuntu/work/ICS_PA/"
     },

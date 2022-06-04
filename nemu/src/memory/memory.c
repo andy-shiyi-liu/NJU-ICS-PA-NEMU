@@ -69,7 +69,7 @@ uint32_t laddr_read(laddr_t laddr, size_t len)
 			// printf("Cross-page Data Read!\n");
 			// printf("laddr: %x\n", laddr);
 			// printf("len: %x\n", len);
-			// printf("laddr + len: %x\n", laddr + len -1);
+			// printf("laddr + len - 1: %x\n", laddr + len -1);
 
 			uint8_t nextPageLen = (laddr + len) & 0xfff;
 			uint8_t inPageLen = len - nextPageLen;
@@ -109,11 +109,27 @@ void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 	if(cpu.cr0.pe == 1 && cpu.cr0.pg == 1){
 		if (laddr >> 12 != (laddr + len -1) >> 12)
 		{
-			printf("Cross-page Data Write!\n");
-			printf("laddr: %x\n", laddr);
-			printf("len: %x\n", len);
-			printf("laddr + len: %x\n", laddr + len);
-			assert(0);
+			// printf("Cross-page Data Write!\n");
+			// printf("laddr: %x\n", laddr);
+			// printf("len: %x\n", len);
+			// printf("laddr + len -1: %x\n", laddr + len - 1);
+
+			uint8_t nextPageLen = (laddr + len) & 0xfff;
+			uint8_t inPageLen = len - nextPageLen;
+			// printf("inPageLen: %x\n", inPageLen);
+			// printf("nextPageLen: %x\n", nextPageLen);
+
+			uint32_t inPageData = mask_byte(data, inPageLen);
+			uint32_t nextPageData = data >> (8 * inPageLen);
+			// printf("data: %x\n", data);
+			// printf("inPageData: %x\n", inPageData);
+			// printf("nextPageData: %x\n", nextPageData);
+
+			uint32_t inPagePaddr = page_translate(laddr);
+			paddr_write(inPagePaddr, inPageLen, inPageData);
+
+			uint32_t nextPagePaddr = page_translate(laddr + inPageLen);
+			paddr_write(nextPagePaddr, nextPageLen, nextPageData);
 		}
 		else
 		{
