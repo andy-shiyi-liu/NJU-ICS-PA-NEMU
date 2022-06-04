@@ -26,18 +26,22 @@ paddr_t page_translate(laddr_t laddr)
 	printf("addr.pdirIndex = %x\n", addr.pdirIndex);
 
 	uint32_t pdirBaseAddr = cpu.cr3.pdbr;
-	PDE *pdir = (PDE*)(hw_mem + (pdirBaseAddr << 12));
-	assert(pdir->present == 1);
-	assert(pdir->read_write == 1);
-	assert(pdir->user_supervisor == 1);
+	PDE pdir;
+	pdir.val = paddr_read((pdirBaseAddr << 12) + 4 * addr.pdirIndex, 4);
+	printf("pdir.val = %x\n", pdir.val);
+	assert(pdir.present == 1);
+	assert(pdir.read_write == 1);
+	assert(pdir.user_supervisor == 1);
 
-	uint32_t ptableBaseAddr = pdir[addr.pdirIndex].page_frame;
-	PTE *ptable = (PTE*)(hw_mem + (ptableBaseAddr << 12));
-	assert(ptable->present == 1);
-	assert(ptable->read_write == 1);
-	assert(ptable->user_supervisor == 1);
+	uint32_t ptableBaseAddr = pdir.page_frame << 12;
+	PTE ptable;
+	ptable.val = paddr_read((ptableBaseAddr << 12) + 4 * addr.ptableIndex, 4);
+	printf("ptable.val = %x\n", ptable.val);
+	assert(ptable.present == 1);
+	assert(ptable.read_write == 1);
+	assert(ptable.user_supervisor == 1);
 
-	uint32_t paddr = (ptable[addr.ptableIndex].page_frame << 12) + addr.inPageAddr;
+	uint32_t paddr = (ptable.page_frame << 12) + addr.inPageAddr;
 	printf("paddr = %x\n", paddr);
 	return paddr;
 #else
