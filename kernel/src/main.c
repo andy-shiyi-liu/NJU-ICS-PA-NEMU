@@ -32,7 +32,6 @@ void init()
 	asm volatile("addl %0, %%esp"
 				 :
 				 : "i"(KOFFSET));
-	// BREAK_POINT
 #endif
 
 /* Jump to init_cond() to continue initialization. */
@@ -44,7 +43,6 @@ void init()
 	// asm volatile("jmp *%0"
 	//  :
 	//  : "r"(init_cond));
-	// BREAK_POINT
 #else
 	asm volatile("jmp *%0"
 				 :
@@ -78,7 +76,6 @@ void init_cond()
 
 #ifdef IA32_PAGE
 	/* Initialize the memory manager. */
-	BREAK_POINT
 	init_mm();
 #endif
 
