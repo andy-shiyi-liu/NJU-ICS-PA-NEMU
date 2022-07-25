@@ -3,8 +3,8 @@
         "args": [
             "--kernel",
             "--testcase",
-            "test-page",
-            "--autorun"
+            "hello-inline",
+            "--autorun",
         ],
         "cwd": "/home/ubuntu/work/ICS_PA/"
     },
@@ -26,5 +26,6 @@
         "stdio.h": "c",
         "time.h": "c",
         "config.h": "c"
-    }
+    },
+    "remotex11.SSH.host": "101.42.141.88",
 }

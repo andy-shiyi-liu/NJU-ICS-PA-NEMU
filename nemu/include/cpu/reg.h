@@ -55,6 +55,12 @@ typedef struct {
 }SegReg;
 #endif
 
+#ifdef IA32_INTR
+typedef struct {
+	uint16_t limit;
+	uint64_t base:32;
+}IDTR;
+#endif
 
 // define the structure of registers
 typedef struct
