@@ -9,14 +9,14 @@
             "command": "rm -rf /home/ubuntu/work/ICS_PA/build"
         },
         {
-            "label": "use ref implementation",
+            "label": "use ref implementation and cmake clean",
             "type": "shell",
-            "command": "cd /home/ubuntu/work/ICS_PA/nemu/src/cpu/decode ; mv opcode.c opcode.bak ; mv opcode.ref opcode.c"
+            "command": "cd /home/ubuntu/work/ICS_PA/nemu/src/cpu/decode ; mv opcode.c opcode.bak ; mv opcode.ref opcode.c ; rm -rf /home/ubuntu/work/ICS_PA/build"
         },
         {
-            "label": "use my implementation",
+            "label": "use my implementation and cmake clean",
             "type": "shell",
-            "command": "cd /home/ubuntu/work/ICS_PA/nemu/src/cpu/decode ; mv opcode.c opcode.ref ; mv opcode.bak opcode.c"
+            "command": "cd /home/ubuntu/work/ICS_PA/nemu/src/cpu/decode ; mv opcode.c opcode.ref ; mv opcode.bak opcode.c ; rm -rf /home/ubuntu/work/ICS_PA/build"
         },
     ]
 }

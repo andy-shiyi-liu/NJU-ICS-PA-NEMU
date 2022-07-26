@@ -8,7 +8,7 @@ nemu:
 # $(call git_commit, "compile nemu testcase kernel", $(TIME_MAKE))
 	cd nemu && make
 	cd testcase && make
-	cd kernel && make
+# cd kernel && make
 
 run: nemu
 # $(call git_commit, "run", $(TIME_MAKE))
@@ -31,7 +31,7 @@ clean:
 	cd nemu && make clean
 	cd game && make clean
 	cd testcase && make clean
-	cd kernel && make clean
+# cd kernel && make clean
 
 # local tests to different stages of PA
 
