@@ -35,14 +35,14 @@ void raise_intr(uint8_t intr_no)
 	//find IDT entry
 	uint32_t idtEntry = cpu.idtr.base + 8 * intr_no;
 
-	printf("idtr.base: %x\n", cpu.idtr.base);
-	printf("intr_no: %x\n", intr_no);
-	printf("idtEntry: %x\n", idtEntry);
+	// printf("idtr.base: %x\n", cpu.idtr.base);
+	// printf("intr_no: %x\n", intr_no);
+	// printf("idtEntry: %x\n", idtEntry);
 
-	opr_src.type = OPR_MEM;
-    opr_src.data_size = 32;
-    opr_src.addr = cpu.idtr.base;
-	operand_read(&opr_src);
+	// opr_src.type = OPR_MEM;
+    // opr_src.data_size = 32;
+    // opr_src.addr = cpu.idtr.base;
+	// operand_read(&opr_src);
 
 	//clear IF if it is a interrupt
 	GateDesc idt;
