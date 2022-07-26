@@ -9,6 +9,7 @@
   ],
   "files.associations": {
     "common.h": "c",
-    "config.h": "c"
+    "config.h": "c",
+    "stdint.h": "c"
   }
 }
