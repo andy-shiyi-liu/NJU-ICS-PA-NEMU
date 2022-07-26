@@ -31,6 +31,7 @@ paddr_t page_translate(laddr_t laddr)
 	pdir.val = paddr_read(pdirBaseAddr + sizeof(PDE) * addr.pdirIndex, sizeof(PDE));
 	// printf("pdir.val = %x\n", pdir.val);
 	// printf("pdir.page_frame = %x\n", pdir.page_frame);
+	// fflush(stdout);
 	assert(pdir.present == 1);
 	assert(pdir.read_write == 1);
 	assert(pdir.user_supervisor == 1);

@@ -23,10 +23,10 @@ void load_sreg(uint8_t sreg)
 	/* TODO: load the invisibile part of the segment register 'sreg' by reading the GDT.
 	 * The visible part of 'sreg' should be assigned by mov or ljmp already.
 	 */
-	printf("load sreg %d\n", sreg);
-	printf("cpu.gdtr.base: %d\n", cpu.gdtr.base);
+	// printf("load sreg %d\n", sreg);
+	// printf("cpu.gdtr.base: %d\n", cpu.gdtr.base);
 	uint32_t segDescriptorAddr = cpu.gdtr.base + 8 * cpu.segReg[sreg].index;
-	printf("segDescriptorAddr: %d\n", segDescriptorAddr);
+	// printf("segDescriptorAddr: %d\n", segDescriptorAddr);
 	if(segDescriptorAddr > cpu.gdtr.base + cpu.gdtr.limit)
 	{
 		printf("ERROR: gdt table overflow!");

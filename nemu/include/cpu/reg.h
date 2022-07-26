@@ -57,8 +57,8 @@ typedef struct {
 
 #ifdef IA32_INTR
 typedef struct {
-	uint16_t limit;
-	uint64_t base:32;
+	uint32_t limit:16;
+	uint32_t base;
 }IDTR;
 #endif
 

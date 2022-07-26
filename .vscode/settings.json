@@ -4,7 +4,7 @@
             "--kernel",
             "--testcase",
             "hello-inline",
-            "--autorun",
+            // "--autorun",
         ],
         "cwd": "/home/ubuntu/work/ICS_PA/"
     },

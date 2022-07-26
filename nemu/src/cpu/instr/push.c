@@ -47,3 +47,30 @@ make_instr_func(push_i_b)
     print_asm_1("push", "b", 2, &opr_src);
     return 2;
 }
+
+void push_gpr(uint32_t val)
+{
+    opr_dest.type = OPR_MEM;
+    opr_dest.data_size = data_size;
+    cpu.esp -= data_size / 8;
+    opr_dest.addr = cpu.esp;
+    opr_dest.val = val;
+    
+    operand_write(&opr_dest);
+}
+
+make_instr_func(pusha)
+{
+    uint32_t temp = cpu.esp;
+    push_gpr(cpu.eax);
+    push_gpr(cpu.ecx);
+    push_gpr(cpu.edx);
+    push_gpr(cpu.ebx);
+    push_gpr(temp);
+    push_gpr(cpu.ebp);
+    push_gpr(cpu.esi);
+    push_gpr(cpu.edi);
+
+    print_asm_0("pusha", "", 1);
+    return 1;
+}

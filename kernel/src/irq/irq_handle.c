@@ -1,5 +1,6 @@
 #include "common.h"
 #include "x86.h"
+// #include <stdio.h>
 
 #define NR_IRQ_HANDLE 32
 
@@ -33,6 +34,7 @@ void add_irq_handle(int irq, void (*func)(void))
 void irq_handle(TrapFrame *tf)
 {
 	int irq = tf->irq;
+	// printf("irq: %d\n", irq);
 
 	if (irq < 0)
 	{
@@ -40,6 +42,7 @@ void irq_handle(TrapFrame *tf)
 	}
 	else if (irq == 0x80)
 	{
+		// panic("Unexpected exception #%d at eip = %x", irq, tf->eip);
 		do_syscall(tf);
 	}
 	else if (irq < 1000)

@@ -8,7 +8,7 @@ void raise_intr(uint8_t intr_no)
 	// push EFLAGS
 	opr_dest.type = OPR_MEM;
     opr_dest.data_size = 32;
-    cpu.esp -= sizeof(cpu.eflags.val);
+    cpu.esp -= 4;
     opr_dest.addr = cpu.esp;
     opr_dest.val = cpu.eflags.val;
     
@@ -16,24 +16,33 @@ void raise_intr(uint8_t intr_no)
 
 	// push CS
 	opr_dest.type = OPR_MEM;
-    opr_dest.data_size = 32;
+    opr_dest.data_size = 16;
+    cpu.esp -= 4;
     opr_dest.addr = cpu.esp;
     opr_dest.val = cpu.cs.val;
-    cpu.esp -= sizeof(cpu.cs.val);
     
     operand_write(&opr_dest);
 
 	// push EIP
 	opr_dest.type = OPR_MEM;
     opr_dest.data_size = 32;
+    cpu.esp -= 4;
     opr_dest.addr = cpu.esp;
     opr_dest.val = cpu.eip;
-    cpu.esp -= sizeof(cpu.eip);
     
     operand_write(&opr_dest);
 
 	//find IDT entry
-	uint32_t idtEntry = cpu.idtr.base + 4 * intr_no;
+	uint32_t idtEntry = cpu.idtr.base + 8 * intr_no;
+
+	printf("idtr.base: %x\n", cpu.idtr.base);
+	printf("intr_no: %x\n", intr_no);
+	printf("idtEntry: %x\n", idtEntry);
+
+	opr_src.type = OPR_MEM;
+    opr_src.data_size = 32;
+    opr_src.addr = cpu.idtr.base;
+	operand_read(&opr_src);
 
 	//clear IF if it is a interrupt
 	GateDesc idt;
@@ -54,9 +63,9 @@ void raise_intr(uint8_t intr_no)
 		cpu.eflags.IF = 0;
 	}
 
-	printf("idt.val[0],[1]: %d, %d\n", idt.val[0], idt.val[1]);
-	printf("idt.selector: %d\n", idt.selector);
-	printf("cpu.cs.val: %d\n", cpu.cs.val);
+	// printf("idt.val[0],[1]: %d, %d\n", idt.val[0], idt.val[1]);
+	// printf("idt.selector: %d\n", idt.selector);
+	// printf("cpu.cs.val: %d\n", cpu.cs.val);
 
 	//set CS:EIP to the entry of the interrupt handler, need to reload CS with load_sreg()
 	cpu.cs.val = idt.selector;
