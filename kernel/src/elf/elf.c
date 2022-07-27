@@ -154,8 +154,10 @@ uint32_t loader()
 	volatile uint32_t entry = elf->e_entry;
 
 #ifdef IA32_PAGE
+	// Log("CHECKPOINT: before mm_malloc");
 	mm_malloc(KOFFSET - STACK_SIZE, STACK_SIZE);
 #ifdef HAS_DEVICE_VGA
+	// Log("CHECKPOINT: before video mapping");
 	create_video_mapping();
 #endif
 	write_cr3(get_ucr3());

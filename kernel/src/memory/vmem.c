@@ -17,7 +17,29 @@ void create_video_mapping()
 	 * some page tables to create this mapping.
 	 */
 
-	panic("please implement me");
+	// panic("please implement me");
+
+	// Log("Creating video mapping, magic 5");
+	PDE *updir = get_updir();
+	uint32_t uptable_idx, upframe_idx;
+	// Log("Fetched PDE");
+
+	/* make all PDE invalid */
+	memset(updir, 0, NR_PT * sizeof(PDE));
+
+	/* fill PDEs and PTEs */
+	updir->val = make_pde(updir->page_frame);
+	upframe_idx = 160;
+
+	PTE *uptable = (PTE *)(((updir->page_frame << 12) & 0xfffff000) + upframe_idx * sizeof(PTE));
+	for (uptable_idx = 0; uptable_idx < (SCR_SIZE / 4096) + 1; uptable_idx++)
+	{
+		uptable->val = make_pte(upframe_idx << 12);
+		// Log("make pte of ptable addr: %x, page fame index: %x, page frame addr: %x", (uint32_t)uptable, upframe_idx, uptable->page_frame);
+		upframe_idx++;
+		uptable++;
+	}
+	// Log("Finished Video mapping");
 }
 
 void video_mapping_write_test()
